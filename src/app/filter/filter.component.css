@@ -1,0 +1,52 @@
+div{
+  position: relative;
+  padding: 10px 10px;
+  text-align: center;
+  border-top: 1px solid black;
+  box-shadow:
+    /* The top layer shadow */
+    0 1px 1px rgba(0,0,0,0.15),
+      /* The second layer */
+    0 10px 0 -5px #f2f3f4,
+      /* The second layer shadow */
+    0 10px 1px -4px rgba(0,0,0,0.15),
+      /* The third layer */
+    0 20px 0 -10px #f2f3f4,
+      /* The third layer shadow */
+    0 20px 1px -9px rgba(0,0,0,0.15);
+  /* Padding for demo purposes */
+}
+input{
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+.radio{
+  margin: 1px;
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+}
+.radio:hover{
+  border-color: #a7afb2;
+  cursor: pointer;
+}
+input:checked + label{
+  border-color: #ff9b9b;
+}
+#clear{
+  float: right;
+}
+#clear:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
+#leftitems{
+  float: left;
+}
+#span_clear{
+  width: 120px;
+}
+#span_clear > label{
+  margin: 2px;
+}

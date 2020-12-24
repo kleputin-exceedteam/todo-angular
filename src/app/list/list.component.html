@@ -1,0 +1,15 @@
+<ul *ngIf="tasks.length > 0" class="heroes">
+  <li *ngFor="let task of tasks, index as i">
+    <label class="container">
+      <input type="checkbox" [ngClass]="!task.is_active ? 'checked' : ''">
+      <span class="checkmark" (click)="markAsComp(task.id)"></span>
+    </label>
+    <span (dblclick)="clickSpan($event, task)">
+      <input class="name" [disabled]="!(enabledEditTask && enabledEditTask.id === task.id)" [ngModel]="task.name" (ngModelChange)="changeName($event)"
+             (blur)="enabledEditTask = null; sendName(task.id)" (keyup.enter)="sendName(task.id)">
+    </span>
+    <span class="delete" (click)="deleteItem(task.id)">
+      <i class="fas fa-times"></i>
+    </span>
+  </li>
+</ul>

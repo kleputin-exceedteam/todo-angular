@@ -1,0 +1,15 @@
+h1 {
+  color: #ff9b9b;
+  margin: auto;
+  text-align: center;
+  font-size: 125px;
+  font-family: Verdana, Helvetica, sans-serif;
+  font-weight: 100;
+}
+#parent_block{
+  width: 40%;
+  margin: auto;
+}
+#activity{
+  box-shadow: 0 0 24px rgba(0,0,0,0.3);
+}

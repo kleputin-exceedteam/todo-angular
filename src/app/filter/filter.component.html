@@ -1,0 +1,14 @@
+<div *ngIf="needDisplay">
+  <label id="leftitems"> {{itemsleft}} item left</label>
+  <span id="span_radio">
+    <input name='filter' type="radio" id='all' (change)="showComp()" [value]=1 [(ngModel)]="filterchoose">
+    <label for="all" class='radio'>All</label>
+    <input name='filter' type="radio" id='comp' (change)="showComp()" [value]=2 [(ngModel)]="filterchoose">
+    <label for="comp" class='radio'>Completed</label>
+    <input name='filter' type="radio" id='active' (change)="showComp()" [value]=3 [(ngModel)]="filterchoose">
+    <label for="active" class='radio'>Active</label>
+  </span>
+  <span id="span_clear">
+    <label [ngClass]="{invisible: !needClear}" id='clear' (click)="deletecomp()">Clear completed</label>
+  </span>
+</div>

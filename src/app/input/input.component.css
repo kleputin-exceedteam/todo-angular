@@ -1,0 +1,27 @@
+:host{
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: auto;
+  padding: 10px;
+}
+input{
+  border: none !important;
+  padding: 6px 12px;
+  margin: 0;
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  min-width: 0;
+  height: 36px;
+}
+input:focus{
+  outline: none;
+}
+button{
+  background-color: transparent;
+  outline: none;
+  border: none;
+  color: #a7afb2;
+}
