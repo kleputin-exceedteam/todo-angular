@@ -2,13 +2,13 @@
   <li *ngFor="let task of tasks, index as i">
     <label class="container">
       <input type="checkbox" [ngClass]="!task.is_active ? 'checked' : ''">
-      <span class="checkmark" (click)="markAsComp(task.id)"></span>
+      <span class="checkmark" (click)="markAsComp(task._id)"></span>
     </label>
     <span (dblclick)="clickSpan($event, task)">
-      <input class="name" [disabled]="!(enabledEditTask && enabledEditTask.id === task.id)" [ngModel]="task.name" (ngModelChange)="changeName($event)"
-             (blur)="enabledEditTask = null; sendName(task.id)" (keyup.enter)="sendName(task.id)">
+      <input class="name" [disabled]="!(enabledEditTask && enabledEditTask._id === task._id)" [ngModel]="task.name" (ngModelChange)="changeName($event)"
+             (blur)="enabledEditTask = null;" (keyup.enter)="sendName(task._id)">
     </span>
-    <span class="delete" (click)="deleteItem(task.id)">
+    <span class="delete" (click)="deleteItem(task._id)">
       <i class="fas fa-times"></i>
     </span>
   </li>

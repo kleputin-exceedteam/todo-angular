@@ -1,17 +1,21 @@
-import {EventEmitter, Injectable} from '@angular/core';
-import { TASKS } from './task-data';
+import { Injectable} from '@angular/core';
 import Task from './task';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {ServerserviceService} from './serverservice.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class TaskserviceService {
-  private tasks = TASKS;
+  tasks: Task[] = [];
+
   filter = 1;
+
+  constructor(private service: ServerserviceService) {
+  }
+
   private filteredTasks: Task[] = this.tasks;
-  private freeId: number = this.tasks.length + 1;
   private leftItemsCount = this.tasks.filter(value => value.is_active).length;
   private needDisplayFilter = this.tasks.length > 0;
   private needClear = this.tasks.length - this.leftItemsCount > 0;
@@ -21,61 +25,99 @@ export class TaskserviceService {
   leftItems: Subject<number> = new BehaviorSubject<number>(this.leftItemsCount);
   needClearSub: Subject<boolean> = new BehaviorSubject(this.needClear);
 
-  constructor() { }
-
-  private updateId(): void{
-    this.freeId++;
-  }
-
   clearComp(): void{
-    this.tasks = this.tasks.filter(value => value.is_active);
-    this.filterTasks();
-    this.needFilter.next(this.tasks.length > 0);
-    this.needClearSub.next(false);
+    this.service.deleteCompleted().subscribe(res => {
+      if (res.code === 200){
+        this.tasks = this.tasks.filter(value => value.is_active);
+        this.filterTasks();
+        this.needFilter.next(this.tasks.length > 0);
+        this.needClearSub.next(false);
+      } else {
+        console.log('Error to clear completed tasks', res.error);
+      }
+    });
   }
 
-  getFreeId(): number{
-    return this.freeId;
+  setChecked(id: string): void {
+    const index = this.tasks.findIndex(value => value._id === id);
+    const status = !this.tasks[index].is_active;
+    this.service.changeStatus(id, status).subscribe(res => {
+      if (res.code === 202){
+        this.tasks[index].is_active = status;
+        this.filterTasks();
+        this.updateLeftCount();
+        this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
+      } else {
+        console.log('Server not change status', res.error);
+      }
+    });
   }
 
-  setChecked(id: number): void {
-    const index = this.tasks.findIndex(value => value.id === id);
-    this.tasks[index].is_active = !this.tasks[index].is_active;
-    this.filterTasks();
-    this.updateLeftCount();
-    this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
+  deleteById(id: string): void{
+    this.service.deleteTask(id).subscribe(res => {
+      if (res.code === 200){
+        const index = this.tasks.findIndex(value => value._id === id);
+        this.tasks.splice(index, 1);
+        this.filterTasks();
+        this.updateLeftCount();
+        this.needFilter.next(this.tasks.length > 0);
+        this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
+      } else {
+        console.log('delete failed');
+      }
+    });
+  }
+  addTask(newname: string): void {
+    this.service.pushTask(newname).subscribe(res => {
+      if (res.code === 201){
+        this.tasks.push({_id: res._id.toString(), name: newname, is_active: true});
+        this.updateLeftCount();
+        this.needFilter.next(this.tasks.length > 0);
+      } else if (res.code === 208) {
+        alert('Already exists');
+      } else {
+        console.log('Something wrong!', res);
+      }
+    });
   }
 
-  deleteById(id: number): void{
-    const index = this.tasks.findIndex(value => value.id === id);
-    this.tasks.splice(index, 1);
-    this.filterTasks();
-    this.updateLeftCount();
-    this.needFilter.next(this.tasks.length > 0);
-    this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
-  }
-  addTask(task: Task): void {
-    this.tasks.push(task);
-    this.updateId();
-    this.filterTasks();
-    this.updateLeftCount();
-    this.needFilter.next(this.tasks.length > 0);
-  }
-
-  changeNameById(name: string, id: number): void{
-    const index = this.tasks.findIndex(value => value.id === id);
-    this.tasks[index].name = name;
+  changeNameById(name: string, id: string): void{
+    this.service.changeName(id, name).subscribe(res => {
+      if (res.code === 200){
+        const index = this.tasks.findIndex(value => value._id === id);
+        this.tasks[index].name = name;
+      } else if (res.code === 208) {
+       alert('Already exists');
+      } else {
+        console.log('Error in change name');
+      }
+    });
   }
 
   markTask(): void{
     if (this.tasks.every(value => !(value.is_active))){
-      this.tasks.forEach(value => value.is_active = true);
+      this.service.changeAllStatus(true).subscribe(res => {
+        if (res.code === 200){
+          this.tasks.forEach(value => value.is_active = true);
+          this.updateLeftCount();
+          this.filterTasks();
+          this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
+        } else {
+          console.log('Failed to change status to active');
+        }
+      });
     } else {
-      this.tasks.forEach(value => value.is_active = false);
+      this.service.changeAllStatus(false).subscribe(res => {
+        if (res.code === 200){
+          this.tasks.forEach(value => value.is_active = false);
+          this.updateLeftCount();
+          this.filterTasks();
+          this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
+        } else {
+          console.log('Failed to change status to completed');
+        }
+      });
     }
-    this.updateLeftCount();
-    this.filterTasks();
-    this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
   }
 
   changeFilter(num: number): void{
@@ -114,5 +156,13 @@ export class TaskserviceService {
   private updateLeftCount(): void{
     this.leftItemsCount = this.tasks.filter(value => value.is_active).length;
     this.leftItems.next(this.leftItemsCount);
+  }
+  UpdateServiceData(tasks: Task[]): void{
+    this.tasks = tasks;
+    this.filterTasks();
+    this.updateLeftCount();
+    this.getNeedFilter().next(this.tasks.length > 0);
+    this.getLeftItems().next(this.tasks.filter(value => value.is_active).length);
+    this.getNeedClear().next(this.tasks.length - this.leftItemsCount > 0);
   }
 }

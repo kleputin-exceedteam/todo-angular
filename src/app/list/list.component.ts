@@ -26,8 +26,8 @@ export class ListComponent implements OnInit, OnDestroy {
     e.preventDefault();
     this.enabledEditTask = taskToEdit;
   }
-  sendName(id: number): void{
-    if (this.newname.trim().length > 0){
+  sendName(id: string): void{
+    if (this.newname.trim().length > 0) {
       this.service.changeNameById(this.newname.trim(), id);
       this.enabledEditTask = null;
     } else {
@@ -41,11 +41,11 @@ export class ListComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteItem(index: number): void{
+  deleteItem(index: string): void{
     this.service.deleteById(index);
   }
 
-  markAsComp(index: number): void{
+  markAsComp(index: string): void{
     this.service.setChecked(index);
   }
 
