@@ -1,7 +1,9 @@
 import { Injectable} from '@angular/core';
-import Task from './task';
+import Task from '../models/task';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {ServerserviceService} from './serverservice.service';
+import {Store} from '@ngrx/store';
+import {addTask, deleteTask} from '../ngrx/tasks.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,8 @@ export class TaskserviceService {
 
   filter = 1;
 
-  constructor(private service: ServerserviceService) {
+  constructor(private service: ServerserviceService,
+              private store: Store) {
   }
 
   private filteredTasks: Task[] = this.tasks;
@@ -39,29 +42,31 @@ export class TaskserviceService {
   }
 
   setChecked(id: string): void {
-    const index = this.tasks.findIndex(value => value._id === id);
-    const status = !this.tasks[index].is_active;
-    this.service.changeStatus(id, status).subscribe(res => {
+    /*const index = this.tasks.findIndex(value => value._id === id);
+    const status = !this.tasks[index].is_active;*/
+   /* this.service.changeStatus(id, status).subscribe(res => {
       if (res.code === 202){
-        this.tasks[index].is_active = status;
+
+        /!*this.tasks[index].is_active = status;
         this.filterTasks();
         this.updateLeftCount();
-        this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
+        this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);*!/
       } else {
         console.log('Server not change status', res.error);
       }
-    });
+    });*/
   }
 
   deleteById(id: string): void{
     this.service.deleteTask(id).subscribe(res => {
       if (res.code === 200){
-        const index = this.tasks.findIndex(value => value._id === id);
+        this.store.dispatch(deleteTask({id}));
+        /*const index = this.tasks.findIndex(value => value._id === id);
         this.tasks.splice(index, 1);
         this.filterTasks();
         this.updateLeftCount();
         this.needFilter.next(this.tasks.length > 0);
-        this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);
+        this.needClearSub.next((this.tasks.length - this.leftItemsCount) > 0);*/
       } else {
         console.log('delete failed');
       }
@@ -70,9 +75,10 @@ export class TaskserviceService {
   addTask(newname: string): void {
     this.service.pushTask(newname).subscribe(res => {
       if (res.code === 201){
-        this.tasks.push({_id: res._id.toString(), name: newname, is_active: true});
-        this.updateLeftCount();
-        this.needFilter.next(this.tasks.length > 0);
+        const NewTask = {_id: res._id.toString(), name: newname, is_active: true};
+        this.store.dispatch(addTask({NewTask}));
+/*        this.updateLeftCount();
+        this.needFilter.next(this.tasks.length > 0);*/
       } else if (res.code === 208) {
         alert('Already exists');
       } else {

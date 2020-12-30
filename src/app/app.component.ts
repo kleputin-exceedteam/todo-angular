@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {TaskserviceService} from './taskservice.service';
-import {ServerserviceService} from './serverservice.service';
+import {TaskserviceService} from './services/taskservice.service';
+import {ServerserviceService} from './services/serverservice.service';
+import {Store} from '@ngrx/store';
+import {getTasks} from './ngrx/tasks.actions';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +12,10 @@ import {ServerserviceService} from './serverservice.service';
 export class AppComponent implements OnInit{
   title = 'todos';
   constructor(private service: TaskserviceService,
-              private serv: ServerserviceService) {
+              private serv: ServerserviceService,
+              private store: Store) {
   }
   ngOnInit(): void {
-    this.serv.getTasks().subscribe(res => this.service.UpdateServiceData(res));
+    this.store.dispatch(getTasks());
   }
 }

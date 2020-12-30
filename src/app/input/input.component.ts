@@ -1,6 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import { TaskserviceService} from '../taskservice.service';
-import { ServerserviceService} from '../serverservice.service';
+import { TaskserviceService} from '../services/taskservice.service';
 
 
 @Component({
@@ -17,6 +16,7 @@ export class InputComponent implements OnInit, OnDestroy {
   task = '';
 
   inputData(): void{
+
     this.service.addTask(this.task.trim());
     this.task = '';
   }

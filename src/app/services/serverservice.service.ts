@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
-import Task from './task';
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import Task from '../models/task';
+import { Observable, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +16,7 @@ export class ServerserviceService {
   constructor(private http: HttpClient) { }
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.tasksUrl}/`)
-      .pipe(
+    return this.http.get<Task[]>(`${this.tasksUrl}/`).pipe(
         catchError(this.handleError<Task[]>('getTasks', []))
       );
   }
@@ -60,10 +59,8 @@ export class ServerserviceService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error(error);
 
-      // Let the app keep running by returning an empty result.
       return of(result as T);
     };
   }

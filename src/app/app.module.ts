@@ -7,6 +7,10 @@ import { ListComponent } from './list/list.component';
 import { FilterComponent } from './filter/filter.component';
 import {FormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import {StoreModule} from '@ngrx/store';
+import {reducer } from './ngrx/tasks.reducers';
+import {EffectsModule} from '@ngrx/effects';
+import {TasksEffectors} from './ngrx/tasks.effectors';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,9 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    StoreModule.forRoot({ tasks: reducer}),
+    EffectsModule.forRoot([TasksEffectors])
   ],
   providers: [],
   bootstrap: [AppComponent]
