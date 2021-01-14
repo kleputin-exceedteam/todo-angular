@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {selectCount} from '../ngrx/tasks.selectors';
-import {changeFilter} from '../ngrx/tasks.actions';
+import {changeFilter, TryDeleteComp} from '../ngrx/tasks.actions';
 
 
 
@@ -20,6 +20,7 @@ export class FilterComponent implements OnInit {
 
   constructor(private store: Store) { }
   deletecomp(): void{
+    this.store.dispatch(TryDeleteComp());
   }
   showComp(): void{
     this.store.dispatch(changeFilter({newFilter: this.filterchoose}));

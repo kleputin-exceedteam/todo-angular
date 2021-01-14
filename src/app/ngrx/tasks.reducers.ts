@@ -1,5 +1,5 @@
 import {createReducer, on} from '@ngrx/store';
-import {addTask, changeFilter, changeStatus, deleteTask, markAll, retrievedTasks} from './tasks.actions';
+import {addTask, changeFilter, changeStatus, deleteComp, deleteTask, markAll, retrievedTasks} from './tasks.actions';
 import Task from '../models/task';
 
 export interface State {
@@ -79,11 +79,15 @@ export const tasksReducer = createReducer(
         return true;
       }
     });
-    return {tasks: newtasks, count: newtasks.length, all_comp: newtasks.every(val => !val.is_active), filteredTasks: newFiltered};
+    return {...state, tasks: newtasks, count: newtasks.length, all_comp: newtasks.every(val => !val.is_active), filteredTasks: newFiltered};
   }),
   on(markAll, (state) => {
     const allcompleted = state.tasks.every(val => !val.is_active);
     const newarray = [];
+    let newFiltered = [];
+    if (state.filter === 1){
+      newFiltered = state.tasks;
+    }
     if (allcompleted){
       state.tasks.forEach(val => newarray.push({_id: val._id, name: val.name, is_active: true}));
     } else {
@@ -91,6 +95,16 @@ export const tasksReducer = createReducer(
     }
     return {...state, tasks: newarray, count: newarray.length};
 }),
+  on(deleteComp, (state) => {
+    if (state.filter === 1){
+      return {...state, filteredTasks: state.filteredTasks.filter(val => val.is_active),
+        tasks: state.tasks.filter(val => val.is_active)};
+    } else if (state.filter === 2){
+      return {...state, filteredTasks: [], tasks: state.tasks.filter(val => val.is_active)};
+    } else if (state.filter === 3){
+      return {...state, tasks: state.tasks.filter(val => val.is_active)};
+    }
+  }),
   on(changeFilter, (state, props) => {
     if (props.newFilter === 1){
       return {

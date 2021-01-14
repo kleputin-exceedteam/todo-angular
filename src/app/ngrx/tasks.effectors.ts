@@ -72,6 +72,19 @@ export class TasksEffectors {
       )
     )
   ));
+  deleteComp$ = createEffect(() => this.actions$.pipe(
+    ofType(tasksactions.TryDeleteComp),
+    mergeMap(() => this.service.deleteCompleted()
+      .pipe(
+        tap(res => {
+          if (res.code !== 200){
+            throw res.code;
+          }
+        }),
+        map(() => (tasksactions.deleteComp())),
+        catchError(() => EMPTY)
+      ))
+  ));
 
   constructor(
     private actions$: Actions,
