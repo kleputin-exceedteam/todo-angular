@@ -1,5 +1,5 @@
 <ul *ngIf="(newTasks$ | async)?.length > 0" class="heroes">
-  <li *ngFor="let task of newTasks$ | async, index as i">
+  <li *ngFor="let task of newTasks$ | async; index as i">
     <label class="container">
       <input type="checkbox" [ngClass]="!task.is_active ? 'checked' : ''">
       <span class="checkmark" (click)="markAsComp(task._id, !task.is_active)"></span>

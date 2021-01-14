@@ -1,5 +1,9 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import { TaskserviceService} from '../services/taskservice.service';
+import {Component, OnInit} from '@angular/core';
+import {ServerserviceService} from '../services/serverservice.service';
+import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs';
+import {selectCount} from '../ngrx/tasks.selectors';
+import * as actions from '../ngrx/tasks.actions';
 
 
 @Component({
@@ -8,28 +12,23 @@ import { TaskserviceService} from '../services/taskservice.service';
   styleUrls: ['./input.component.css']
 })
 
-export class InputComponent implements OnInit, OnDestroy {
+export class InputComponent implements OnInit {
 
-  needMarkButton: boolean;
+  needMarkButton: Observable<number> = this.store.select(selectCount);
 
-  constructor(private service: TaskserviceService) { }
+  constructor(private service: ServerserviceService,
+              private store: Store) { }
   task = '';
 
   inputData(): void{
-
-    this.service.addTask(this.task.trim());
+    this.store.dispatch(actions.TryAdd({name: this.task.trim()}));
     this.task = '';
   }
 
   mark_all_as_comp(): void{
-    this.service.markTask();
+    /*this.service.markTask();*/
+    this.store.dispatch(actions.TryMarkAll());
   }
   ngOnInit(): void {
-    this.service.getNeedFilter().subscribe(need => this.needMarkButton = need);
   }
-
-  ngOnDestroy(): void {
-    this.service.getNeedFilter().unsubscribe();
-  }
-
 }

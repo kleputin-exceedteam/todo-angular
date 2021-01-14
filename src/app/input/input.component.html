@@ -1,4 +1,4 @@
- <button [ngClass]="{invisible: !needMarkButton}" type="button" (click)="mark_all_as_comp()">
+ <button [ngClass]="{invisible: !((needMarkButton | async) > 0)}" type="button" (click)="mark_all_as_comp()">
     <i class="fas fa-chevron-down"></i>
   </button>
 <input type="text" placeholder="What needs to be done?" [(ngModel)]="task" (keyup.enter)="inputData();">

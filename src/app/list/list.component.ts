@@ -1,20 +1,20 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import Task from '../models/task';
 import {Store} from '@ngrx/store';
-import { selectTasksList} from '../ngrx/tasks.selectors';
+import { selectTasksList } from '../ngrx/tasks.selectors';
 import {ServerserviceService} from '../services/serverservice.service';
-import {changeStatus} from '../ngrx/tasks.actions';
+import {changeStatus, TryChangeStatus, TryDelete} from '../ngrx/tasks.actions';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css']
 })
-export class ListComponent implements OnInit, OnDestroy {
+export class ListComponent implements OnInit {
 
   tasks: Task[] = [];
-  newname: string;
-  newTasks$ = this.store.select(selectTasksList);
+  newTasks$: Observable<Task[]> = this.store.select(selectTasksList);
 
   enabledEditTask: Task = null;
 
@@ -41,27 +41,13 @@ export class ListComponent implements OnInit, OnDestroy {
   }*/
 
   ngOnInit(): void {
-    /*this.service.getFilteredTasks().subscribe(tasks => {
-      this.tasks = tasks || [];
-    });*/
   }
 
-  deleteItem(index: string): void{
-    /*this.service.deleteById(index);*/
+  deleteItem(id: string): void{
+    this.store.dispatch(TryDelete({id}));
   }
 
-  markAsComp(id: string, newstatus: boolean): void{
-    this.service.changeStatus(id, newstatus).subscribe(res => {
-      if (res.code === 202){
-        this.store.dispatch(changeStatus({ id, newstatus }));
-      } else {
-        console.log('Server not change status', res.error);
-      }
-    });
-    /*this.service.setChecked(index);*/
-  }
-
-  ngOnDestroy(): void{
-    /*this.service.getFilteredTasks().unsubscribe();*/
+  markAsComp(id: string, newstatus: boolean): void {
+    this.store.dispatch(TryChangeStatus({id, newstatus}));
   }
 }
