@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import Task from '../models/task';
 import {Store} from '@ngrx/store';
-import { selectTasksList } from '../ngrx/tasks.selectors';
+import {selectFilterList} from '../ngrx/tasks.selectors';
 import {ServerserviceService} from '../services/serverservice.service';
-import {changeStatus, TryChangeStatus, TryDelete} from '../ngrx/tasks.actions';
+import { TryChangeStatus, TryDelete} from '../ngrx/tasks.actions';
 import {Observable} from 'rxjs';
 
 @Component({
@@ -14,7 +14,7 @@ import {Observable} from 'rxjs';
 export class ListComponent implements OnInit {
 
   tasks: Task[] = [];
-  newTasks$: Observable<Task[]> = this.store.select(selectTasksList);
+  newTasks$: Observable<Task[]> = this.store.select(selectFilterList);
 
   enabledEditTask: Task = null;
 

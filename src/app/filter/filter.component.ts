@@ -1,5 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import { TaskserviceService} from '../services/taskservice.service';
+import {Component, OnInit} from '@angular/core';
+import {Observable} from 'rxjs';
+import {Store} from '@ngrx/store';
+import {selectCount} from '../ngrx/tasks.selectors';
+import {changeFilter} from '../ngrx/tasks.actions';
 
 
 
@@ -8,30 +11,20 @@ import { TaskserviceService} from '../services/taskservice.service';
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.css']
 })
-export class FilterComponent implements OnInit, OnDestroy {
+export class FilterComponent implements OnInit {
 
   itemsleft: number;
-  needDisplay: boolean;
+  needDisplay: Observable<number> = this.store.select(selectCount);
   needClear: boolean;
-  filterchoose: number = 1;
+  filterchoose = 1;
 
-  constructor(private service: TaskserviceService) { }
+  constructor(private store: Store) { }
   deletecomp(): void{
-    this.service.clearComp();
   }
   showComp(): void{
-    this.service.changeFilter(this.filterchoose);
+    this.store.dispatch(changeFilter({newFilter: this.filterchoose}));
   }
   ngOnInit(): void {
-    this.service.getLeftItems().subscribe(left => this.itemsleft = left);
-    this.service.getNeedFilter().subscribe(need => this.needDisplay = need);
-    this.service.getNeedClear().subscribe(need => this.needClear = need);
-  }
-
-  ngOnDestroy(): void {
-    this.service.getLeftItems().unsubscribe();
-    this.service.getNeedFilter().unsubscribe();
-    this.service.getNeedClear().unsubscribe();
   }
 
 }

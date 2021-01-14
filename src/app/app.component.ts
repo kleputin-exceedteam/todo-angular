@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {TaskserviceService} from './services/taskservice.service';
 import {ServerserviceService} from './services/serverservice.service';
 import {Store} from '@ngrx/store';
 import {getTasks} from './ngrx/tasks.actions';
@@ -11,7 +10,7 @@ import {getTasks} from './ngrx/tasks.actions';
 })
 export class AppComponent implements OnInit{
   title = 'todos';
-  constructor(private service: TaskserviceService,
+  constructor(
               private serv: ServerserviceService,
               private store: Store) {
   }

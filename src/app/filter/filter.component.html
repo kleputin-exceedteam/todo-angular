@@ -1,4 +1,4 @@
-<div *ngIf="needDisplay">
+<div *ngIf="(needDisplay | async) > 0">
   <label id="leftitems"> {{itemsleft}} item left</label>
   <span id="span_radio">
     <input name='filter' type="radio" id='all' (change)="showComp()" [value]=1 [(ngModel)]="filterchoose">

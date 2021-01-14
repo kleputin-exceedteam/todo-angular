@@ -8,11 +8,10 @@ const selectTasksState = (state: Tasks.State): any => {
   return state.tasks;
 };
 
-export const selectTasksList = createSelector(
+export const selectFilterList = createSelector(
   selectTasksState,
   (state: Tasks.State): Task[] => {
-    console.log(123, state);
-    return state.tasks; // это все неправильное определение. нужно найти как правильно определить передачу selectom.
+    return state.filteredTasks; // это все неправильное определение. нужно найти как правильно определить передачу selectom.
   }
 );
 
