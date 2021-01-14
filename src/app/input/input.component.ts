@@ -26,7 +26,6 @@ export class InputComponent implements OnInit {
   }
 
   mark_all_as_comp(): void{
-    /*this.service.markTask();*/
     this.store.dispatch(actions.TryMarkAll());
   }
   ngOnInit(): void {

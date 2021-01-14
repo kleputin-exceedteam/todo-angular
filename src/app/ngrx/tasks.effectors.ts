@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {EMPTY, of} from 'rxjs';
-import {tap, map, mergeMap, catchError, withLatestFrom} from 'rxjs/operators';
+import {tap, map, mergeMap, catchError, withLatestFrom, concatMap} from 'rxjs/operators';
 import { ServerserviceService } from '../services/serverservice.service';
 import * as tasksactions from './tasks.actions';
 import {Store} from '@ngrx/store';
@@ -48,11 +48,12 @@ export class TasksEffectors {
   ));
   markAll$ = createEffect(() => this.actions$.pipe(
     ofType(tasksactions.TryMarkAll),
-    withLatestFrom(this.store$.select(selectAllComp)),
-    mergeMap((action, storeState) => this.service.changeAllStatus(storeState)
+    concatMap(action => of(action).pipe(
+      withLatestFrom(this.store$.select(selectAllComp))
+    )),
+    mergeMap(([, allcompState]) => this.service.changeAllStatus(allcompState)
       .pipe(
-        tap(res => console.log(1111111111, storeState)),
-        map(res => (tasksactions.markAll())),
+        map(() => (tasksactions.markAll())),
         catchError(() => EMPTY)
       )
     )
