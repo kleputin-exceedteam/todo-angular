@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ServerserviceService} from '../services/serverservice.service';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
-import {selectCount} from '../ngrx/tasks.selectors';
-import * as actions from '../ngrx/tasks.actions';
+import {selectCount} from '../store/tasks.selectors';
+import * as actions from '../store/tasks.actions';
 
 
 @Component({

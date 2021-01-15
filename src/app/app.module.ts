@@ -8,9 +8,11 @@ import { FilterComponent } from './filter/filter.component';
 import {FormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import {StoreModule} from '@ngrx/store';
-import {reducer } from './ngrx/tasks.reducers';
+import {reducer } from './store/tasks.reducers';
 import {EffectsModule} from '@ngrx/effects';
-import {TasksEffectors} from './ngrx/tasks.effectors';
+import {TasksEffectors} from './store/tasks.effectors';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -20,10 +22,14 @@ import {TasksEffectors} from './ngrx/tasks.effectors';
     FilterComponent
   ],
   imports: [
-    BrowserModule,
+    StoreModule.forRoot({ tasks: reducer}),
+    // Instrumentation must be imported after importing StoreModule (config is optional)
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      // logOnly: environment.production, // Restrict extension to log-only mode
+    }),    BrowserModule,
     FormsModule,
     HttpClientModule,
-    StoreModule.forRoot({ tasks: reducer}),
     EffectsModule.forRoot([TasksEffectors])
   ],
   providers: [],

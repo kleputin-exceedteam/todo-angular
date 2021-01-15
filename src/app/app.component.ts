@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ServerserviceService} from './services/serverservice.service';
 import {Store} from '@ngrx/store';
-import {getTasks} from './ngrx/tasks.actions';
+import {getTasks} from './store/tasks.actions';
 
 @Component({
   selector: 'app-root',

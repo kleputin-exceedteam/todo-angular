@@ -51,7 +51,7 @@ export class TasksEffectors {
     concatMap(action => of(action).pipe(
       withLatestFrom(this.store$.select(selectAllComp))
     )),
-    mergeMap(([, allcompState]) => this.service.changeAllStatus(allcompState)
+    mergeMap(([_, allcompState]) => this.service.changeAllStatus(allcompState)
       .pipe(
         map(() => (tasksactions.markAll())),
         catchError(() => EMPTY)

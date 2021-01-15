@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {selectCount, selectCountComp} from '../ngrx/tasks.selectors';
-import {changeFilter, TryDeleteComp} from '../ngrx/tasks.actions';
+import {selectCount, selectCountComp} from '../store/tasks.selectors';
+import {changeFilter, TryDeleteComp} from '../store/tasks.actions';
 
 
 
