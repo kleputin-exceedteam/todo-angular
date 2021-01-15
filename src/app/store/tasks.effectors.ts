@@ -85,6 +85,18 @@ export class TasksEffectors {
         catchError(() => EMPTY)
       ))
   ));
+  changeName$ = createEffect(() => this.actions$.pipe(
+    ofType(tasksactions.TryChangeName),
+    mergeMap((action) => this.service.changeName(action.id, action.newname).pipe(
+      tap(res => {
+        if (res.code !== 200){
+          throw res.code;
+        }
+      }),
+      map(() => (tasksactions.changeName({id: action.id, newname: action.newname}))),
+      catchError(() => EMPTY)
+    )
+  )));
 
   constructor(
     private actions$: Actions,
