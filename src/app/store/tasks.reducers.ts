@@ -1,6 +1,11 @@
-import {createReducer, on} from '@ngrx/store';
+import {Action, createReducer, on} from '@ngrx/store';
 import {addTask, changeFilter, changeName, changeStatus, deleteComp, deleteTask, markAll, retrievedTasks} from './tasks.actions';
 import Task from '../models/task';
+import {getNewStateChangeName, getNewStateChangeStatus, getNewStateMarkAll} from './reducer.createNewStates';
+
+export interface AppState {
+  tasksState: State;
+}
 
 export interface State {
   tasks: Task[];
@@ -71,111 +76,62 @@ export const tasksReducer = createReducer(
       countComp: newCompCount
     };
   }),
-  on(changeStatus, (state, { id, newstatus }) => {
-    const newtasks = state.tasks.slice(0);
-    const index = newtasks.findIndex(task => task._id === id);
-    const NewTask = {
-      _id: newtasks[index]._id,
-      name: newtasks[index].name,
-      is_active: newstatus
-    };
-    newtasks.splice(index, 1, NewTask);
-    const newFiltered = newtasks.filter(task => {
-      if (state.filter === 1) {
-        return true;
-      } else if (state.filter === 2 && !task.is_active) {
-        return true;
-      } else if (state.filter === 3 && task.is_active) {
-        return true;
-      }
-    });
-    let newCountComp = state.countComp;
-    newstatus ? newCountComp-- : newCountComp++;
-    return {...state, tasks: newtasks, count: newtasks.length, all_comp: newtasks.every(task => !task.is_active),
-      filteredTasks: newFiltered,
-      countComp: newCountComp
+  on(changeStatus, (state, props) => {
+    const result = getNewStateChangeStatus(state, props);
+    return {...state, tasks: result.newTasks, count: result.newTasks.length, all_comp: result.newAllComp,
+      filteredTasks: result.newFilteredTasks,
+      countComp: result.newCountComp
     };
   }),
   on(markAll, (state) => {
-    const allcompleted = state.tasks.every(task => !task.is_active);
-    const newarray = [];
-    if (allcompleted){
-      state.tasks.forEach(task => newarray.push({_id: task._id, name: task.name, is_active: true}));
-    } else {
-      state.tasks.forEach(task => newarray.push({_id: task._id, name: task.name, is_active: false}));
-    }
-    let newFiltered = [];
-    let newCompCount;
-    allcompleted ? newCompCount = 0 : newCompCount = newarray.length;
-    if (state.filter === 1){
-      newFiltered = newarray;
-    } else if (state.filter === 2){
-      if (!allcompleted){
-        newFiltered = newarray;
-      } else {
-        newFiltered = [];
-      }
-    } else if (state.filter === 3){
-      if (!allcompleted){
-        newFiltered = [];
-      } else {
-        newFiltered = newarray;
-      }
-    }
-    return {...state, tasks: newarray, count: newarray.length, filteredTasks: newFiltered, countComp: newCompCount};
+    const result = getNewStateMarkAll(state);
+    return {...state, tasks: result.newTasks, count: result.newTasks.length,
+      filteredTasks: result.newFilteredTasks, countComp: result.newCountComp};
 }),
   on(deleteComp, (state) => {
     const newarray = state.tasks.filter(task => task.is_active);
-    if (state.filter === 1){
-      return {...state, filteredTasks: state.filteredTasks.filter(task => task.is_active),
-        tasks: newarray, countComp: 0, count: newarray.length};
-    } else if (state.filter === 2){
-      return {...state, filteredTasks: [], tasks: newarray, countComp: 0, count: newarray.length};
-    } else if (state.filter === 3){
-      return {...state, tasks: newarray, countComp: 0, count: newarray.length};
+    switch (state.filter){
+      case 1: // chosen filter allTasks
+        return {...state, filteredTasks: state.filteredTasks.filter(task => task.is_active),
+          tasks: newarray, countComp: 0, count: newarray.length};
+      case 2: // chosen filter completedTasks
+        return {...state, filteredTasks: [], tasks: newarray, countComp: 0, count: newarray.length};
+      case 3: // chosen filter activeTasks
+        return {...state, tasks: newarray, countComp: 0, count: newarray.length};
     }
   }),
   on(changeFilter, (state, props) => {
-    if (props.newFilter === 1){
-      return {
-        ...state,
-        filter: props.newFilter,
-        filteredTasks: state.tasks
-      };
-    } else if (props.newFilter === 2){
-      return {
-        ...state,
-        filter: props.newFilter,
-        filteredTasks: state.tasks.filter(task => !task.is_active)
-      };
-    } else {
-      return {
-        ...state,
-        filter: props.newFilter,
-        filteredTasks: state.tasks.filter(task => task.is_active)
-      };
+    switch (props.newFilter){
+      case 1:
+        return {
+          ...state,
+          filter: props.newFilter,
+          filteredTasks: state.tasks
+        };
+      case 2:
+        return {
+          ...state,
+          filter: props.newFilter,
+          filteredTasks: state.tasks.filter(task => !task.is_active)
+        };
+      case 3:
+        return {
+          ...state,
+          filter: props.newFilter,
+          filteredTasks: state.tasks.filter(task => task.is_active)
+        };
     }
   }),
   on(changeName, (state, props) => {
-    const newTask = {
-      _id: props.id,
-      name: props.newname,
-      is_active: state.tasks.find(task => task._id === props.id).is_active
-    };
-    const indexFiltered = state.filteredTasks.findIndex(task => task._id === props.id);
-    const newFilteredArr = state.filteredTasks.slice(0);
-    const index = state.tasks.findIndex(task => task._id === props.id);
-    const newArray = state.tasks.slice(0);
-    newArray.splice(index, 1, newTask);
-    newFilteredArr.splice(indexFiltered, 1, newTask);
+    const result = getNewStateChangeName(state, props);
     return {
       ...state,
-      tasks: newArray,
-      filteredTasks: newFilteredArr
+      tasks: result.tasks,
+      filteredTasks: result.FilteredTask
     };
   }));
 
 // tslint:disable-next-line:typedef
-export function reducer(state: State | undefined, action) {
+export function reducer(state: State | undefined, action: Action) {
   return tasksReducer(state, action);
 }

@@ -15,7 +15,7 @@ export class TasksEffectors {
     mergeMap(() => this.service.getTasks()
       .pipe(
         map(Tasks => (tasksactions.retrievedTasks({Tasks}))),
-        catchError(() => EMPTY)
+        catchError(() => EMPTY),
       ))
     )
   );

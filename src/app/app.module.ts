@@ -8,11 +8,10 @@ import { FilterComponent } from './filter/filter.component';
 import {FormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import {StoreModule} from '@ngrx/store';
-import {reducer } from './store/tasks.reducers';
+import { reducer } from './store/tasks.reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {TasksEffectors} from './store/tasks.effectors';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -22,7 +21,7 @@ import {environment} from '../environments/environment';
     FilterComponent
   ],
   imports: [
-    StoreModule.forRoot({ tasks: reducer}),
+    StoreModule.forRoot({tasksState: reducer}),
     // Instrumentation must be imported after importing StoreModule (config is optional)
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

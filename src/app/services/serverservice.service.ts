@@ -16,8 +16,9 @@ export class ServerserviceService {
   constructor(private http: HttpClient) { }
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.tasksUrl}/`).pipe(
-        catchError(this.handleError<Task[]>('getTasks', []))
+    return this.http.get<Task[]>(`${this.tasksUrl}/`)
+      .pipe(
+        catchError(this.handleError<Task[]>('getTasks'))
       );
   }
 
@@ -57,10 +58,10 @@ export class ServerserviceService {
   }
 
   // tslint:disable-next-line:typedef
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation') {
     return (error: any): Observable<T> => {
       console.error(error);
-      return of(result as T);
+      return of(error);
     };
   }
 }
