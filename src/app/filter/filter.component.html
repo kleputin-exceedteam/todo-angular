@@ -1,5 +1,5 @@
-<div *ngIf="(needDisplay | async) > 0">
-  <label id="leftitems"> {{itemsleft}} item left</label>
+<div *ngIf="(count | async) > 0">
+  <label id="leftitems"> {{(count | async) - (countComp | async)}} item left</label>
   <span id="span_radio">
     <input name='filter' type="radio" id='all' (change)="showComp()" [value]=1 [(ngModel)]="filterchoose">
     <label for="all" class='radio'>All</label>
@@ -9,6 +9,6 @@
     <label for="active" class='radio'>Active</label>
   </span>
   <span id="span_clear">
-    <label [ngClass]="{invisible: !needClear}" id='clear' (click)="deletecomp()">Clear completed</label>
+    <label [ngClass]="{invisible: !((countComp | async) > 0)}" id='clear' (click)="deletecomp()">Clear completed</label>
   </span>
 </div>

@@ -8,13 +8,15 @@ export interface State {
   all_comp: boolean;
   filteredTasks: Task[];
   filter: number;
+  countComp: number;
 }
 export const initialState: State = {
   tasks: [],
   count: 0,
   all_comp: false,
   filteredTasks: [],
-  filter: 1
+  filter: 1,
+  countComp: 0
 };
 
 export const tasksReducer = createReducer(
@@ -33,7 +35,8 @@ export const tasksReducer = createReducer(
         } else if (state.filter === 3 && val.is_active) {
           return true;
         }
-      })
+      }),
+      countComp: payload.Tasks.filter(val => !val.is_active).length
     };
   }),
   on(addTask, (state, { NewTask }) => {
@@ -54,13 +57,20 @@ export const tasksReducer = createReducer(
       };
     }
   }),
-  on(deleteTask, (state, { id }) => ({
-    ...state,
-    tasks: state.tasks.filter(val => val._id !== id),
-    count: state.count - 1,
-    all_comp: state.tasks.every(val => !val.is_active),
-    filteredTasks: state.tasks.filter(val => val._id !== id)
-  })),
+  on(deleteTask, (state, { id }) => {
+    let newCompCount = state.countComp;
+    if (!state.tasks.find(val => val._id === id).is_active){
+      newCompCount--;
+    }
+    return {
+      ...state,
+      tasks: state.tasks.filter(val => val._id !== id),
+      count: state.count - 1,
+      all_comp: state.tasks.every(val => !val.is_active),
+      filteredTasks: state.tasks.filter(val => val._id !== id),
+      countComp: newCompCount
+    };
+  }),
   on(changeStatus, (state, { id, newstatus }) => {
     const newtasks = state.tasks.slice(0);
     const index = newtasks.findIndex(value => value._id === id);
@@ -79,30 +89,50 @@ export const tasksReducer = createReducer(
         return true;
       }
     });
-    return {...state, tasks: newtasks, count: newtasks.length, all_comp: newtasks.every(val => !val.is_active), filteredTasks: newFiltered};
+    let newCountComp = state.countComp;
+    newstatus ? newCountComp-- : newCountComp++;
+    return {...state, tasks: newtasks, count: newtasks.length, all_comp: newtasks.every(val => !val.is_active),
+      filteredTasks: newFiltered,
+      countComp: newCountComp
+    };
   }),
   on(markAll, (state) => {
     const allcompleted = state.tasks.every(val => !val.is_active);
     const newarray = [];
-    let newFiltered = [];
-    if (state.filter === 1){
-      newFiltered = state.tasks;
-    }
     if (allcompleted){
       state.tasks.forEach(val => newarray.push({_id: val._id, name: val.name, is_active: true}));
     } else {
       state.tasks.forEach(val => newarray.push({_id: val._id, name: val.name, is_active: false}));
     }
-    return {...state, tasks: newarray, count: newarray.length};
+    let newFiltered = [];
+    let newCompCount;
+    allcompleted ? newCompCount = 0 : newCompCount = newarray.length;
+    if (state.filter === 1){
+      newFiltered = newarray;
+    } else if (state.filter === 2){
+      if (!allcompleted){
+        newFiltered = newarray;
+      } else {
+        newFiltered = [];
+      }
+    } else if (state.filter === 3){
+      if (!allcompleted){
+        newFiltered = [];
+      } else {
+        newFiltered = newarray;
+      }
+    }
+    return {...state, tasks: newarray, count: newarray.length, filteredTasks: newFiltered, countComp: newCompCount};
 }),
   on(deleteComp, (state) => {
+    const newarray = state.tasks.filter(val => val.is_active);
     if (state.filter === 1){
       return {...state, filteredTasks: state.filteredTasks.filter(val => val.is_active),
-        tasks: state.tasks.filter(val => val.is_active)};
+        tasks: newarray, countComp: 0, count: newarray.length};
     } else if (state.filter === 2){
-      return {...state, filteredTasks: [], tasks: state.tasks.filter(val => val.is_active)};
+      return {...state, filteredTasks: [], tasks: newarray, countComp: 0, count: newarray.length};
     } else if (state.filter === 3){
-      return {...state, tasks: state.tasks.filter(val => val.is_active)};
+      return {...state, tasks: newarray, countComp: 0, count: newarray.length};
     }
   }),
   on(changeFilter, (state, props) => {

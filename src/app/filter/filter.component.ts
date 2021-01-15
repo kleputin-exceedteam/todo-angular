@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {selectCount} from '../ngrx/tasks.selectors';
+import {selectCount, selectCountComp} from '../ngrx/tasks.selectors';
 import {changeFilter, TryDeleteComp} from '../ngrx/tasks.actions';
 
 
@@ -13,9 +13,8 @@ import {changeFilter, TryDeleteComp} from '../ngrx/tasks.actions';
 })
 export class FilterComponent implements OnInit {
 
-  itemsleft: number;
-  needDisplay: Observable<number> = this.store.select(selectCount);
-  needClear: boolean;
+  countComp: Observable<number> = this.store.select(selectCountComp);
+  count: Observable<number> = this.store.select(selectCount);
   filterchoose = 1;
 
   constructor(private store: Store) { }

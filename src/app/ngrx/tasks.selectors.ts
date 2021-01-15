@@ -28,3 +28,10 @@ export const selectAllComp = createSelector(
     return state.all_comp;
   }
 );
+
+export const selectCountComp = createSelector(
+  selectTasksState,
+  (state: Tasks.State): number => {
+    return state.countComp;
+  }
+);
