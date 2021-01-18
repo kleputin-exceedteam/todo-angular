@@ -56,11 +56,10 @@ export class ServerserviceService {
     );
   }
 
-  // tslint:disable-next-line:typedef
-  private handleError<T>(operation = 'operation') {
+  private handleError<T>(operation = 'operation'): any {
     return (error: any): Observable<T> => {
-      console.error(error);
-      return of(error);
+      console.error('Server error!', error);
+      throw error;
     };
   }
 }

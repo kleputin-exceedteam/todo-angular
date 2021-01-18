@@ -10,6 +10,24 @@ const selectFilterState = (state: fromReducers.AppState): fromReducers.FilteredS
   return state.AppState.filteredTasksState;
 };
 
+const selectAppState = (state: fromReducers.AppState): fromReducers.AppState => {
+  return state.AppState;
+};
+
+export const selectErrorState = createSelector(
+  selectAppState,
+  (state: fromReducers.AppState): boolean => {
+    return state.error;
+  }
+);
+
+export const selectLoadingState = createSelector(
+  selectAppState,
+  (state: fromReducers.AppState): boolean => {
+    return state.loading;
+  }
+);
+
 export const selectFilterList = createSelector(
   selectFilterState,
   fromReducers.selectFilteredTasks

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import {EMPTY, of} from 'rxjs';
+import { of } from 'rxjs';
 import {tap, map, mergeMap, catchError, withLatestFrom, concatMap} from 'rxjs/operators';
 import { ServerserviceService } from '../services/serverservice.service';
-import * as tasksactions from './tasks.actions';
+import * as taskActions from './tasks.actions';
 import {Store} from '@ngrx/store';
 import {selectAllComp} from './tasks.selectors';
 
@@ -11,25 +11,29 @@ import {selectAllComp} from './tasks.selectors';
 export class TasksEffectors {
 
   getTasks$ = createEffect(() => this.actions$.pipe(
-    ofType(tasksactions.getTasks),
+    ofType(taskActions.getTasks),
     mergeMap(() => this.service.getTasks()
       .pipe(
-        map(Tasks => (tasksactions.retrievedTasks({Tasks}))),
-        catchError(() => EMPTY),
+        map(Tasks => (taskActions.retrievedTasks({Tasks}))),
+        catchError(() => {
+          return of({type: '[Tasks] Error'});
+        }),
       ))
     )
   );
   deleteTask$ = createEffect(() => this.actions$.pipe(
-    ofType(tasksactions.TryDelete),
+    ofType(taskActions.TryDelete),
     mergeMap((action) => this.service.deleteTask(action.id)
       .pipe(
-        map(res => (tasksactions.deleteTask({id: res.delItem._id}) )),
-        catchError(() => EMPTY)
+        map(res => (taskActions.deleteTask({id: res.delItem._id}) )),
+        catchError(() => {
+          return of({type: '[Tasks] Error'});
+        })
       )
     )
   ));
   addTask$ = createEffect(() => this.actions$.pipe(
-    ofType(tasksactions.TryAdd),
+    ofType(taskActions.TryAdd),
     mergeMap((action) => this.service.pushTask(action.name)
       .pipe(
         tap(res => {
@@ -37,29 +41,29 @@ export class TasksEffectors {
             throw res.code;
           }
         }),
-        map(res => (tasksactions.addTask({NewTask: {
+        map(res => (taskActions.addTask({NewTask: {
             _id: res._id,
             name: action.name,
             is_active: true
           }}))),
-        catchError(() => EMPTY)
+        catchError(() => of({type: '[Tasks] Error'}))
       )
     )
   ));
   markAll$ = createEffect(() => this.actions$.pipe(
-    ofType(tasksactions.TryMarkAll),
+    ofType(taskActions.TryMarkAll),
     concatMap(action => of(action).pipe(
       withLatestFrom(this.store$.select(selectAllComp))
     )),
     mergeMap(([_, allcompState]) => this.service.changeAllStatus(allcompState)
       .pipe(
-        map(() => (tasksactions.markAll())),
-        catchError(() => EMPTY)
+        map(() => (taskActions.markAll())),
+        catchError(() => of({type: '[Tasks] Error'}))
       )
     )
   ));
   changeStatus$ = createEffect(() => this.actions$.pipe(
-    ofType(tasksactions.TryChangeStatus),
+    ofType(taskActions.TryChangeStatus),
     mergeMap((action) => this.service.changeStatus(action.id, action.newstatus)
       .pipe(
         tap(res => {
@@ -67,13 +71,13 @@ export class TasksEffectors {
             throw res.code;
           }
         }),
-        map(() => (tasksactions.changeStatus({id: action.id, newstatus: action.newstatus}))),
-        catchError(() => EMPTY)
+        map(() => (taskActions.changeStatus({id: action.id, newstatus: action.newstatus}))),
+        catchError(() => of({type: '[Tasks] Error'}))
       )
     )
   ));
   deleteComp$ = createEffect(() => this.actions$.pipe(
-    ofType(tasksactions.TryDeleteComp),
+    ofType(taskActions.TryDeleteComp),
     mergeMap(() => this.service.deleteCompleted()
       .pipe(
         tap(res => {
@@ -81,20 +85,20 @@ export class TasksEffectors {
             throw res.code;
           }
         }),
-        map(() => (tasksactions.deleteComp())),
-        catchError(() => EMPTY)
+        map(() => (taskActions.deleteComp())),
+        catchError(() => of({type: '[Tasks] Error'}))
       ))
   ));
   changeName$ = createEffect(() => this.actions$.pipe(
-    ofType(tasksactions.TryChangeName),
+    ofType(taskActions.TryChangeName),
     mergeMap((action) => this.service.changeName(action.id, action.newname).pipe(
       tap(res => {
         if (res.code !== 200){
           throw res.code;
         }
       }),
-      map(() => (tasksactions.changeName({id: action.id, newname: action.newname}))),
-      catchError(() => EMPTY)
+      map(() => (taskActions.changeName({id: action.id, newname: action.newname}))),
+      catchError(() => of({type: '[Tasks] Error'}))
     )
   )));
 

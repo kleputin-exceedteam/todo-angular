@@ -1,11 +1,13 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import {addTask, changeFilter, changeName, changeStatus, deleteComp, deleteTask, markAll, retrievedTasks} from './tasks.actions';
+import * as UserActions from './tasks.actions';
 import Task from '../models/task';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 
 export interface AppState {
   tasksState: TasksState;
   filteredTasksState: FilteredState;
+  loading: boolean;
+  error: boolean;
 }
 
 export interface TasksState extends EntityState<Task> {
@@ -18,13 +20,13 @@ export interface FilteredState extends EntityState<Task>{
   filter: number;
 }
 
+export function selectTskId(task: Task): string {
+  return task._id;
+}
+
 export const filterAdapter: EntityAdapter<Task> = createEntityAdapter({
   selectId: selectTskId
 });
-
-export function selectTskId(a: Task): string {
-  return a._id;
-}
 
 export const tasksAdapter: EntityAdapter<Task> = createEntityAdapter<Task>({
   selectId: selectTskId
@@ -42,13 +44,31 @@ export const initialStateFiltered: FilteredState = filterAdapter.getInitialState
 
 export const initialState = {
   tasksState: initialStateTasks,
-  filteredTasksState: initialStateFiltered
+  filteredTasksState: initialStateFiltered,
+  loading: false,
+  error: false
 };
 
 export const tasksReducer = createReducer(
   initialState,
-  on(retrievedTasks, (state, payload) => {
+  on(UserActions.TryMarkAll, UserActions.TryChangeName, UserActions.TryDeleteComp,
+    UserActions.TryChangeStatus, UserActions.TryAdd, UserActions.TryDelete, UserActions.getTasks, (state) => {
     return {
+      ...state,
+      loading: true
+    };
+  }),
+  on(UserActions.Error, (state) => {
+    return {
+      ...state,
+      error: true,
+      loading: false
+    };
+  }),
+  on(UserActions.retrievedTasks, (state, payload) => {
+    return {
+      ...state,
+      loading: false,
       tasksState: tasksAdapter.setAll(payload.Tasks, {
         ...state.tasksState,
         count: payload.Tasks.length,
@@ -59,31 +79,36 @@ export const tasksReducer = createReducer(
         getFilterBoolean(state.filteredTasksState.filter, task)), state.filteredTasksState)
     };
   }),
-  on(addTask, (state, { NewTask }) => {
+  on(UserActions.addTask, (state, { NewTask }) => {
     const newTaskState = tasksAdapter.addOne(NewTask, {...state.tasksState, count: state.tasksState.count + 1, all_comp: false});
     if (state.filteredTasksState.filter !== 2){
       return {
+        ...state,
+        loading: false,
         tasksState: newTaskState,
         filteredTasksState: filterAdapter.addOne(NewTask, {...state.filteredTasksState})
       };
     } else {
       return {
         ...state,
+        loading: false,
         tasksState: newTaskState
       };
     }
   }),
-  on(deleteTask, (state, { id }) => {
+  on(UserActions.deleteTask, (state, { id }) => {
     let newCompCount = state.tasksState.countComp;
     if (!state.tasksState.entities[id]?.is_active){
       newCompCount--;
     }
     return {
+        ...state,
+        loading: false,
         tasksState: tasksAdapter.removeOne(id, {...state.tasksState, count: state.tasksState.count - 1, countComp: newCompCount}),
         filteredTasksState: filterAdapter.removeOne(id, {...state.filteredTasksState})
     };
   }),
-  on(changeStatus, (state, props) => {
+  on(UserActions.changeStatus, (state, props) => {
     let newCompCount = state.tasksState.countComp;
     props.newstatus ? newCompCount-- : newCompCount++;
     let newFilteredState;
@@ -94,12 +119,14 @@ export const tasksReducer = createReducer(
       newFilteredState = filterAdapter.removeOne(props.id, state.filteredTasksState);
     }
     return {
+      ...state,
+      loading: false,
       filteredTasksState: newFilteredState,
       tasksState: tasksAdapter.updateOne({id: props.id, changes: {is_active: props.newstatus}},
         {...state.tasksState, countComp: newCompCount})
     };
   }),
-  on(markAll, (state) => {
+  on(UserActions.markAll, (state) => {
     let CompCount;
     let newFiltered;
     const tasks = Object.values(state.tasksState.entities);
@@ -127,13 +154,17 @@ export const tasksReducer = createReducer(
     }
     isAllWasComp ? CompCount = 0 : CompCount = tasks.length;
     return {
+      ...state,
+      loading: false,
       tasksState: tasksAdapter.updateMany(updates, {...state.tasksState, countComp: CompCount}),
       filteredTasksState: newFiltered
     };
-}),
-  on(deleteComp, (state) => {
+  }),
+  on(UserActions.deleteComp, (state) => {
     const countDelComp = Object.values(state.tasksState.entities).filter(task => !task.is_active).length;
     return {
+      ...state,
+      loading: false,
       tasksState: tasksAdapter.removeMany(task => !task.is_active, {
         ...state.tasksState,
         countComp: state.tasksState.countComp - countDelComp,
@@ -142,16 +173,19 @@ export const tasksReducer = createReducer(
       filteredTasksState: filterAdapter.removeMany(task => !task.is_active, state.filteredTasksState)
     };
   }),
-  on(changeFilter, (state, props) => {
+  on(UserActions.changeFilter, (state, props) => {
     const tasks = Object.values(state.tasksState.entities);
     return {
       ...state,
+      loading: false,
       filteredTasksState: filterAdapter.setAll(tasks.filter(task => getFilterBoolean(props.newFilter, task)),
         { ...state.filteredTasksState, filter: props.newFilter })
     };
   }),
-  on(changeName, (state, props) => {
+  on(UserActions.changeName, (state, props) => {
     return {
+      ...state,
+      loading: false,
       tasksState: tasksAdapter.updateOne({id: props.id, changes: {name: props.newname}}, state.tasksState),
       filteredTasksState: filterAdapter.updateOne({id: props.id, changes: {name: props.newname}}, state.filteredTasksState)
     };

@@ -1,4 +1,4 @@
-<div id="parent_block">
+<div *ngIf="(loading | async) === false && (error | async) === false"id="parent_block">
   <h1>{{title}}</h1>
   <div id="activity">
     <app-input></app-input>
@@ -6,3 +6,5 @@
     <app-filter></app-filter>
   </div>
 </div>
+<div *ngIf="(loading | async) === true"> It's loading. Please, wait! </div>
+<div *ngIf="(error | async) === true" class="lds-dual-ring"></div>

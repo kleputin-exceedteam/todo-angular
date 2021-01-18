@@ -15,3 +15,4 @@ export const TryDelete = createAction('[Tasks] TryDelete', props<{ id }>());
 export const TryAdd = createAction('[Tasks] TryAdd', props<{name}>());
 export const TryMarkAll = createAction('[Tasks] TryMarkAll');
 export const TryChangeStatus = createAction('[Tasks] TryChangeStatus', props<{id, newstatus}>());
+export const Error = createAction('[Tasks] Error');
