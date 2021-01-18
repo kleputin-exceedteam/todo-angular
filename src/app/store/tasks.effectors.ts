@@ -38,7 +38,7 @@ export class TasksEffectors {
           }
         }),
         map(res => (tasksactions.addTask({NewTask: {
-          _id: res._id,
+            _id: res._id,
             name: action.name,
             is_active: true
           }}))),

@@ -21,7 +21,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     FilterComponent
   ],
   imports: [
-    StoreModule.forRoot({tasksState: reducer}),
+    StoreModule.forRoot({AppState: reducer}),
     // Instrumentation must be imported after importing StoreModule (config is optional)
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

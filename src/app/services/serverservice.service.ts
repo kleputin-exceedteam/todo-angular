@@ -45,7 +45,6 @@ export class ServerserviceService {
     );
   }
   changeAllStatus(allComple: boolean): Observable<any>{
-    console.log(allComple);
     return this.http.patch(`${this.tasksUrl}/change_all`, {all_comp: allComple}).pipe(
       catchError(this.handleError('changeAllStatus'))
     );
