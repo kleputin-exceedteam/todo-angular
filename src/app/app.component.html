@@ -1,18 +1,7 @@
-<div [appDisable]="(loading | async) || (error | async) || (crash | async)" id="parent_block">
-  <h1>{{title}}</h1>
-  <div id="activity">
-    <app-input></app-input>
-    <app-list></app-list>
-    <app-filter></app-filter>
-  </div>
-</div>
-<div *ngIf="(loading | async)" class="lds-dual-ring center"></div>
-<div *ngIf="(error | async)" class="center alertbox">
-  <p> Enter correct name </p>
-  <button (click)="resetErr()"> Okey </button>
-</div>
-<div *ngIf="(crash | async)" class="center">
-  <h2>
-    No server response...
-  </h2>
-</div>
+<nav>
+  <ul>
+    <li><a routerLink="/userTasks" routerLinkActive="active">Tasks</a></li>
+    <li><a routerLink="/" routerLinkActive="active">authorization</a></li>
+  </ul>
+</nav>
+<router-outlet></router-outlet>

@@ -14,6 +14,8 @@ import {TasksEffectors} from './store/tasks.effectors';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {DisabledDirective} from './directives/DisabledDirective';
 import { UserTasksComponent } from './user-tasks/user-tasks.component';
+import { UserAuthenticationComponent } from './user-authentication/user-authentication.component';
+import {AppRoutingModule} from './app-routing/app-routing.module';
 
 @NgModule({
   declarations: [
@@ -22,18 +24,18 @@ import { UserTasksComponent } from './user-tasks/user-tasks.component';
     ListComponent,
     FilterComponent,
     DisabledDirective,
-    UserTasksComponent
+    UserTasksComponent,
+    UserAuthenticationComponent
   ],
   imports: [
     StoreModule.forRoot({AppState: reducer}),
-    // Instrumentation must be imported after importing StoreModule (config is optional)
     StoreDevtoolsModule.instrument({
-      maxAge: 25, // Retains last 25 states
-      // logOnly: environment.production, // Restrict extension to log-only mode
+      maxAge: 25,
     }),    BrowserModule,
     FormsModule,
     HttpClientModule,
-    EffectsModule.forRoot([TasksEffectors])
+    EffectsModule.forRoot([TasksEffectors]),
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
