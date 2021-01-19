@@ -12,13 +12,17 @@ import { reducer } from './store/tasks.reducers';
 import {EffectsModule} from '@ngrx/effects';
 import {TasksEffectors} from './store/tasks.effectors';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import {DisabledDirective} from './directives/DisabledDirective';
+import { UserTasksComponent } from './user-tasks/user-tasks.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     InputComponent,
     ListComponent,
-    FilterComponent
+    FilterComponent,
+    DisabledDirective,
+    UserTasksComponent
   ],
   imports: [
     StoreModule.forRoot({AppState: reducer}),

@@ -6,18 +6,28 @@ h1 {
   font-family: Verdana, Helvetica, sans-serif;
   font-weight: 100;
 }
-#parent_block{
+
+#parent_block {
   width: 40%;
   margin: auto;
 }
-#activity{
-  box-shadow: 0 0 24px rgba(0,0,0,0.3);
+
+#activity {
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
 }
+
 .lds-dual-ring {
-  display: inline-block;
   width: 80px;
   height: 80px;
 }
+
+.center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
 .lds-dual-ring:after {
   content: " ";
   display: block;
@@ -29,6 +39,7 @@ h1 {
   border-color: #ff9b9b transparent #ff9b9b transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
+
 @keyframes lds-dual-ring {
   0% {
     transform: rotate(0deg);
@@ -37,7 +48,19 @@ h1 {
     transform: rotate(360deg);
   }
 }
-.center {
-  display: table-cell;
-  vertical-align: middle;
+.alertbox > p {
+  text-align: center;
+  color: #ff9b9b;
+}
+.alertbox > button {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: transparent;
+  border: 2px solid #ff9b9b;
+  border-radius: 7px;
+}
+.alertbox > button:focus {
+  border-color: #a7afb2 !important;
+  outline: none !important;
 }

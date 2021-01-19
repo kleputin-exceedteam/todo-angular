@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import Task from '../models/task';
 import {Store} from '@ngrx/store';
 import {selectFilterList} from '../store/tasks.selectors';
-import {ServerserviceService} from '../services/serverservice.service';
-import {TryChangeName, TryChangeStatus, TryDelete} from '../store/tasks.actions';
+import {ServerService} from '../services/server.service';
+import {Error, TryChangeName, TryChangeStatus, TryDelete} from '../store/tasks.actions';
 import {Observable} from 'rxjs';
 
 @Component({
@@ -13,13 +13,12 @@ import {Observable} from 'rxjs';
 })
 export class ListComponent implements OnInit {
 
-  tasks: Task[] = [];
   newTasks$: Observable<Task[]> = this.store.select(selectFilterList);
   newname: string;
 
   enabledEditTask: Task = null;
 
-  constructor(private service: ServerserviceService,
+  constructor(private service: ServerService,
               private store: Store) {
   }
 
@@ -32,13 +31,14 @@ export class ListComponent implements OnInit {
     e.preventDefault();
     this.enabledEditTask = taskToEdit;
   }
-  sendName(id: string): void{
+  sendName(input: any, id: string, oldname: string): void{
     if (this.newname.trim().length > 0) {
       this.store.dispatch(TryChangeName({id, newname: this.newname.trim()}));
       this.enabledEditTask = null;
     } else {
-      alert('Enter correct value');
+      this.store.dispatch(Error({crash: false}));
     }
+    input.value = oldname;
   }
 
   ngOnInit(): void {

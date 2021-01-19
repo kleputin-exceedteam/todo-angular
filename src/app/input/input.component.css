@@ -19,6 +19,9 @@ input{
 input:focus{
   outline: none;
 }
+input:disabled {
+  background-color: white;
+}
 button{
   background-color: transparent;
   outline: none;

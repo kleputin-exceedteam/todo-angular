@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {ServerserviceService} from './services/serverservice.service';
+import {ServerService} from './services/server.service';
 import {Store} from '@ngrx/store';
-import {getTasks} from './store/tasks.actions';
+import {getTasks, ResetErrorState} from './store/tasks.actions';
 import {Observable} from 'rxjs';
-import {selectErrorState, selectLoadingState} from './store/tasks.selectors';
+import {selectCrashState, selectErrorState, selectLoadingState} from './store/tasks.selectors';
 
 @Component({
   selector: 'app-root',
@@ -15,12 +15,16 @@ export class AppComponent implements OnInit{
 
   loading: Observable<boolean> = this.store.select(selectLoadingState);
   error: Observable<boolean> = this.store.select(selectErrorState);
+  crash: Observable<boolean> = this.store.select(selectCrashState);
 
   constructor(
-              private serv: ServerserviceService,
+              private serv: ServerService,
               private store: Store) {
   }
 
+  resetErr(): void{
+    this.store.dispatch(ResetErrorState());
+  }
   ngOnInit(): void {
     this.store.dispatch(getTasks());
   }

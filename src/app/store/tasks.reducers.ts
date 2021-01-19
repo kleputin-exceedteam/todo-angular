@@ -8,6 +8,7 @@ export interface AppState {
   filteredTasksState: FilteredState;
   loading: boolean;
   error: boolean;
+  crash: boolean;
 }
 
 export interface TasksState extends EntityState<Task> {
@@ -46,7 +47,8 @@ export const initialState = {
   tasksState: initialStateTasks,
   filteredTasksState: initialStateFiltered,
   loading: false,
-  error: false
+  error: false,
+  crash: false
 };
 
 export const tasksReducer = createReducer(
@@ -58,11 +60,18 @@ export const tasksReducer = createReducer(
       loading: true
     };
   }),
-  on(UserActions.Error, (state) => {
+  on(UserActions.Error, (state, props) => {
     return {
       ...state,
-      error: true,
-      loading: false
+      error: !props.crash,
+      loading: false,
+      crash: props.crash
+    };
+  }),
+  on(UserActions.ResetErrorState, (state) => {
+    return {
+      ...state,
+      error: false
     };
   }),
   on(UserActions.retrievedTasks, (state, payload) => {

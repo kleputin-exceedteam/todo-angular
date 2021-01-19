@@ -2,15 +2,15 @@ import {createSelector} from '@ngrx/store';
 
 import * as fromReducers from './tasks.reducers';
 
-const selectTasksState = (state: fromReducers.AppState): fromReducers.TasksState => {
+const selectTasksState = (state: {AppState: fromReducers.AppState}): fromReducers.TasksState => {
   return state.AppState.tasksState;
 };
 
-const selectFilterState = (state: fromReducers.AppState): fromReducers.FilteredState => {
+const selectFilterState = (state: {AppState: fromReducers.AppState}): fromReducers.FilteredState => {
   return state.AppState.filteredTasksState;
 };
 
-const selectAppState = (state: fromReducers.AppState): fromReducers.AppState => {
+const selectAppState = (state: {AppState: fromReducers.AppState}): fromReducers.AppState => {
   return state.AppState;
 };
 
@@ -18,6 +18,13 @@ export const selectErrorState = createSelector(
   selectAppState,
   (state: fromReducers.AppState): boolean => {
     return state.error;
+  }
+);
+
+export const selectCrashState = createSelector(
+  selectAppState,
+  (state: fromReducers.AppState): boolean => {
+    return state.crash;
   }
 );
 

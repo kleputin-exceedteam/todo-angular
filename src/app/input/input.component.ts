@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ServerserviceService} from '../services/serverservice.service';
+import {ServerService} from '../services/server.service';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {selectCount} from '../store/tasks.selectors';
@@ -16,7 +16,7 @@ export class InputComponent implements OnInit {
 
   needMarkButton: Observable<number> = this.store.select(selectCount);
 
-  constructor(private service: ServerserviceService,
+  constructor(private service: ServerService,
               private store: Store) { }
   task = '';
 

@@ -7,7 +7,7 @@ import { Observable, of} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ServerserviceService {
+export class ServerService {
 
   private tasksUrl = 'api/tasks';
   httpOptions = {

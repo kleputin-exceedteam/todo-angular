@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import {tap, map, mergeMap, catchError, withLatestFrom, concatMap} from 'rxjs/operators';
-import { ServerserviceService } from '../services/serverservice.service';
+import { ServerService } from '../services/server.service';
 import * as taskActions from './tasks.actions';
 import {Store} from '@ngrx/store';
 import {selectAllComp} from './tasks.selectors';
@@ -16,7 +16,7 @@ export class TasksEffectors {
       .pipe(
         map(Tasks => (taskActions.retrievedTasks({Tasks}))),
         catchError(() => {
-          return of({type: '[Tasks] Error'});
+          return of(taskActions.Error({crash: true}));
         }),
       ))
     )
@@ -25,9 +25,14 @@ export class TasksEffectors {
     ofType(taskActions.TryDelete),
     mergeMap((action) => this.service.deleteTask(action.id)
       .pipe(
+        tap(res => {
+          if (!res.delItem._id){
+            throw {error: 'No id in request'};
+          }
+        }),
         map(res => (taskActions.deleteTask({id: res.delItem._id}) )),
         catchError(() => {
-          return of({type: '[Tasks] Error'});
+          return of(taskActions.Error({crash: true}));
         })
       )
     )
@@ -38,7 +43,10 @@ export class TasksEffectors {
       .pipe(
         tap(res => {
           if (res.code === 208){
-            throw res.code;
+            throw {code: 208, error: 'Already reported'};
+          }
+          if (!res._id) {
+            throw {code: 400, error: 'No response id'};
           }
         }),
         map(res => (taskActions.addTask({NewTask: {
@@ -46,7 +54,13 @@ export class TasksEffectors {
             name: action.name,
             is_active: true
           }}))),
-        catchError(() => of({type: '[Tasks] Error'}))
+        catchError((err) => {
+          if (err.code === 208){
+            return of(taskActions.Error({crash: false}));
+          } else {
+            return of(taskActions.Error({crash: true}));
+          }
+        })
       )
     )
   ));
@@ -58,7 +72,7 @@ export class TasksEffectors {
     mergeMap(([_, allcompState]) => this.service.changeAllStatus(allcompState)
       .pipe(
         map(() => (taskActions.markAll())),
-        catchError(() => of({type: '[Tasks] Error'}))
+        catchError(() => of(taskActions.Error({crash: true})))
       )
     )
   ));
@@ -72,7 +86,7 @@ export class TasksEffectors {
           }
         }),
         map(() => (taskActions.changeStatus({id: action.id, newstatus: action.newstatus}))),
-        catchError(() => of({type: '[Tasks] Error'}))
+        catchError(() => of(taskActions.Error({crash: true})))
       )
     )
   ));
@@ -86,7 +100,7 @@ export class TasksEffectors {
           }
         }),
         map(() => (taskActions.deleteComp())),
-        catchError(() => of({type: '[Tasks] Error'}))
+        catchError(() => of(taskActions.Error({crash: true})))
       ))
   ));
   changeName$ = createEffect(() => this.actions$.pipe(
@@ -94,17 +108,23 @@ export class TasksEffectors {
     mergeMap((action) => this.service.changeName(action.id, action.newname).pipe(
       tap(res => {
         if (res.code !== 200){
-          throw res.code;
+          throw res;
         }
       }),
       map(() => (taskActions.changeName({id: action.id, newname: action.newname}))),
-      catchError(() => of({type: '[Tasks] Error'}))
+      catchError((err) => {
+        if (err.code === 208){
+          return of(taskActions.Error({crash: false}));
+        } else {
+          of(taskActions.Error({crash: true}));
+        }
+      })
     )
   )));
 
   constructor(
     private actions$: Actions,
-    private service: ServerserviceService,
+    private service: ServerService,
     private store$: Store
   ) {}
 }
