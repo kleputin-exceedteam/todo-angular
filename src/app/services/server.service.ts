@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import Task from '../models/task';
-import { Observable, of} from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +11,12 @@ export class ServerService {
 
   private tasksUrl = 'api/tasks';
   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    headers: {token: localStorage.getItem('token')}
   };
   constructor(private http: HttpClient) { }
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.tasksUrl}/`)
+    return this.http.get<Task[]>(`${this.tasksUrl}/`, {headers: {token: localStorage.getItem('token')}})
       .pipe(
         catchError(this.handleError<Task[]>('getTasks'))
       );
@@ -29,29 +29,29 @@ export class ServerService {
   }
 
   changeStatus(id1: string, status1: boolean): Observable<any>{
-    return this.http.patch(`${this.tasksUrl}/change_status`, {id: id1, status: status1}).pipe(
+    return this.http.patch(`${this.tasksUrl}/change_status`, {id: id1, status: status1}, this.httpOptions).pipe(
       catchError(this.handleError<any>('changeStatus'))
     );
   }
   deleteTask(id: string): Observable<any>{
-    return this.http.delete(`${this.tasksUrl}/delete/${id}`).pipe(
+    return this.http.delete(`${this.tasksUrl}/delete/${id}`, this.httpOptions).pipe(
       catchError(this.handleError('deleteTask')
     ));
   }
 
   deleteCompleted(): Observable<any>{
-    return this.http.delete(`${this.tasksUrl}/delete_comp`).pipe(
+    return this.http.delete(`${this.tasksUrl}/delete_comp`, this.httpOptions).pipe(
       catchError(this.handleError('deleteCompleted'))
     );
   }
   changeAllStatus(allComple: boolean): Observable<any>{
-    return this.http.patch(`${this.tasksUrl}/change_all`, {all_comp: allComple}).pipe(
+    return this.http.patch(`${this.tasksUrl}/change_all`, {all_comp: allComple}, this.httpOptions).pipe(
       catchError(this.handleError('changeAllStatus'))
     );
   }
 
   changeName(index, newName: string): Observable<any>{
-    return this.http.patch(`${this.tasksUrl}/change_name`, {id: index, name: newName}).pipe(
+    return this.http.patch(`${this.tasksUrl}/change_name`, {id: index, name: newName}, this.httpOptions).pipe(
       catchError(this.handleError('changeName'))
     );
   }

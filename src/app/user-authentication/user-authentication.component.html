@@ -1,5 +1,7 @@
 <div>
-  <input>
-  <input>
-  <button> Sign in</button>
+  <input #username >
+  <input #password >
+  <button (click)="LogIn(username.value, password.value)"> Sign in</button>
+  <button (click)="LogOut()"> Log out</button>
+  <button (click)="SignUp(username.value, password.value)"> Sign up </button>
 </div>
