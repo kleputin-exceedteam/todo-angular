@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {catchError, map, tap} from 'rxjs/operators';
-import {ServerService} from './server.service';
+import {Observable, of} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -16,14 +15,13 @@ export class AuthenticationService {
     return this.http.post(`${this.authUrl}/login`, {username, password}).pipe(
       catchError(this.handleError<string>('LogIn')),
       map(res => {
-        console.log('in service');
         localStorage.setItem('token', res.token);
       })
     );
   }
 
-  LogOut(): void {
-    localStorage.removeItem('token');
+  LogOut(): Observable<any> {
+    return of(localStorage.removeItem('token'));
   }
 
   SignUp(username: string, password: string): Observable<any>{

@@ -16,6 +16,7 @@ import {DisabledDirective} from './directives/DisabledDirective';
 import { UserTasksComponent } from './user-tasks/user-tasks.component';
 import { UserAuthenticationComponent } from './user-authentication/user-authentication.component';
 import {AppRoutingModule} from './app-routing/app-routing.module';
+import {AuthEffectors} from './store/auth.effectors';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {AppRoutingModule} from './app-routing/app-routing.module';
     }),    BrowserModule,
     FormsModule,
     HttpClientModule,
-    EffectsModule.forRoot([TasksEffectors]),
+    EffectsModule.forFeature([TasksEffectors]),
+    EffectsModule.forRoot([AuthEffectors]),
     AppRoutingModule
   ],
   providers: [],

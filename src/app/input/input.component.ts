@@ -21,8 +21,12 @@ export class InputComponent implements OnInit {
   task = '';
 
   inputData(): void{
-    this.store.dispatch(actions.TryAdd({name: this.task.trim()}));
-    this.task = '';
+    if (this.task.trim().length > 0){
+      this.store.dispatch(actions.TryAdd({name: this.task.trim()}));
+      this.task = '';
+    } else {
+      this.store.dispatch(actions.Error({crash: false}));
+    }
   }
 
   mark_all_as_comp(): void{

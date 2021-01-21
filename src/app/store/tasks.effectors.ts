@@ -27,7 +27,7 @@ export class TasksEffectors {
       .pipe(
         tap(res => {
           if (!res.delItem._id){
-            throw {error: 'No id in request'};
+            throw {error: 'No id in response'};
           }
         }),
         map(res => (taskActions.deleteTask({id: res.delItem._id}) )),

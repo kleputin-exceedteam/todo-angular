@@ -1,0 +1,38 @@
+.inputs > div {
+  display: inline-block;
+  width: 100%;
+}
+.inputs > div > input{
+  display: block;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ff9b9b;
+  margin-bottom: 20px;
+  padding: 5px;
+}
+.inputs > div > input:focus{
+  outline: none;
+}
+.main {
+  width: 40%;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translateX(-50%) translateY(-50%);
+}
+button {
+  position: relative;
+  margin-top: 20px;
+  width: 60%;
+  height: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: transparent;
+  border: 2px solid #ff9b9b;
+  color: #ff90a0;
+  border-radius: 5px;
+}
+button:focus {
+  outline: none;
+  border-color: #a7afb2;
+}

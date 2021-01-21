@@ -60,3 +60,10 @@ export const selectCountComp = createSelector(
     return state.countComp;
   }
 );
+
+export const selectLoginState = createSelector(
+  selectAppState,
+  (state: fromReducers.AppState): boolean => {
+    return state.login;
+  }
+)

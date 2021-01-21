@@ -64,3 +64,12 @@ h1 {
   border-color: #a7afb2 !important;
   outline: none !important;
 }
+#logOut {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  outline: none;
+  background-color: transparent;
+  border: 3px solid #ff9b9b;
+  border-radius: 5px;
+}

@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
+import {Observable} from 'rxjs';
+import {Store} from '@ngrx/store';
+import {selectLoginState} from '../store/tasks.selectors';
+import {loginIn, loginOut1, signUp} from '../store/auth.actions';
 
 @Component({
   selector: 'app-user-authentication',
@@ -8,18 +12,17 @@ import { AuthenticationService } from '../services/authentication.service';
 })
 export class UserAuthenticationComponent implements OnInit {
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService,
+              private store: Store) { }
 
   ngOnInit(): void {
   }
 
   LogIn(username, password): void {
-    this.authService.LogIn(username, password).subscribe(res => console.log(res));
-  }
-  LogOut(): void{
-    this.authService.LogOut();
+    this.store.dispatch(loginIn({username, password}));
   }
   SignUp(username, password): void {
-    this.authService.SignUp(username, password).subscribe(res => console.log(res));
+    this.store.dispatch(signUp({username, password}));
   }
+
 }

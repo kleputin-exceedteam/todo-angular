@@ -1,7 +1,8 @@
 import {Action, createReducer, on} from '@ngrx/store';
-import * as UserActions from './tasks.actions';
+import * as TaskActions from './tasks.actions';
 import Task from '../models/task';
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
+import * as AuthActions from './auth.actions';
 
 export interface AppState {
   tasksState: TasksState;
@@ -9,6 +10,7 @@ export interface AppState {
   loading: boolean;
   error: boolean;
   crash: boolean;
+  login: boolean;
 }
 
 export interface TasksState extends EntityState<Task> {
@@ -48,19 +50,29 @@ export const initialState = {
   filteredTasksState: initialStateFiltered,
   loading: false,
   error: false,
-  crash: false
+  crash: false,
+  login: false
 };
 
 export const tasksReducer = createReducer(
   initialState,
-  on(UserActions.TryMarkAll, UserActions.TryChangeName, UserActions.TryDeleteComp,
-    UserActions.TryChangeStatus, UserActions.TryAdd, UserActions.TryDelete, UserActions.getTasks, (state) => {
+  on(AuthActions.loginSuccess, (state) => {
+    return {
+      ...state,
+      login: true
+    };
+  }),
+  on(AuthActions.loginOut, (state) => {
+    return initialState;
+  }),
+  on(TaskActions.TryMarkAll, TaskActions.TryChangeName, TaskActions.TryDeleteComp,
+    TaskActions.TryChangeStatus, TaskActions.TryAdd, TaskActions.TryDelete, TaskActions.getTasks, (state) => {
     return {
       ...state,
       loading: true
     };
   }),
-  on(UserActions.Error, (state, props) => {
+  on(TaskActions.Error, (state, props) => {
     return {
       ...state,
       error: !props.crash,
@@ -68,13 +80,13 @@ export const tasksReducer = createReducer(
       crash: props.crash
     };
   }),
-  on(UserActions.ResetErrorState, (state) => {
+  on(TaskActions.ResetErrorState, (state) => {
     return {
       ...state,
       error: false
     };
   }),
-  on(UserActions.retrievedTasks, (state, payload) => {
+  on(TaskActions.retrievedTasks, (state, payload) => {
     return {
       ...state,
       loading: false,
@@ -88,7 +100,7 @@ export const tasksReducer = createReducer(
         getFilterBoolean(state.filteredTasksState.filter, task)), state.filteredTasksState)
     };
   }),
-  on(UserActions.addTask, (state, { NewTask }) => {
+  on(TaskActions.addTask, (state, { NewTask }) => {
     const newTaskState = tasksAdapter.addOne(NewTask, {...state.tasksState, count: state.tasksState.count + 1, all_comp: false});
     if (state.filteredTasksState.filter !== 2){
       return {
@@ -105,7 +117,7 @@ export const tasksReducer = createReducer(
       };
     }
   }),
-  on(UserActions.deleteTask, (state, { id }) => {
+  on(TaskActions.deleteTask, (state, { id }) => {
     let newCompCount = state.tasksState.countComp;
     if (!state.tasksState.entities[id]?.is_active){
       newCompCount--;
@@ -117,7 +129,7 @@ export const tasksReducer = createReducer(
         filteredTasksState: filterAdapter.removeOne(id, {...state.filteredTasksState})
     };
   }),
-  on(UserActions.changeStatus, (state, props) => {
+  on(TaskActions.changeStatus, (state, props) => {
     let newCompCount = state.tasksState.countComp;
     props.newstatus ? newCompCount-- : newCompCount++;
     let newFilteredState;
@@ -135,7 +147,7 @@ export const tasksReducer = createReducer(
         {...state.tasksState, countComp: newCompCount})
     };
   }),
-  on(UserActions.markAll, (state) => {
+  on(TaskActions.markAll, (state) => {
     let CompCount;
     let newFiltered;
     const tasks = Object.values(state.tasksState.entities);
@@ -169,7 +181,7 @@ export const tasksReducer = createReducer(
       filteredTasksState: newFiltered
     };
   }),
-  on(UserActions.deleteComp, (state) => {
+  on(TaskActions.deleteComp, (state) => {
     const countDelComp = Object.values(state.tasksState.entities).filter(task => !task.is_active).length;
     return {
       ...state,
@@ -182,7 +194,7 @@ export const tasksReducer = createReducer(
       filteredTasksState: filterAdapter.removeMany(task => !task.is_active, state.filteredTasksState)
     };
   }),
-  on(UserActions.changeFilter, (state, props) => {
+  on(TaskActions.changeFilter, (state, props) => {
     const tasks = Object.values(state.tasksState.entities);
     return {
       ...state,
@@ -191,7 +203,7 @@ export const tasksReducer = createReducer(
         { ...state.filteredTasksState, filter: props.newFilter })
     };
   }),
-  on(UserActions.changeName, (state, props) => {
+  on(TaskActions.changeName, (state, props) => {
     return {
       ...state,
       loading: false,

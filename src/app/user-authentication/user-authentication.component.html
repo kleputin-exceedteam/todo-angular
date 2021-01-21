@@ -1,7 +1,18 @@
-<div>
-  <input #username >
-  <input #password >
-  <button (click)="LogIn(username.value, password.value)"> Sign in</button>
-  <button (click)="LogOut()"> Log out</button>
-  <button (click)="SignUp(username.value, password.value)"> Sign up </button>
+<div class="main">
+  <div class="inputs">
+    <div>
+      <input placeholder="username" #username id="username">
+    </div>
+    <div>
+      <input placeholder="password" #password id="password">
+    </div>
+  </div>
+  <div class="buttons">
+    <div>
+      <button (click)="LogIn(username.value, password.value)"> Sign in</button>
+    </div>
+    <div>
+      <button (click)="SignUp(username.value, password.value)"> Sign up </button>
+    </div>
+  </div>
 </div>

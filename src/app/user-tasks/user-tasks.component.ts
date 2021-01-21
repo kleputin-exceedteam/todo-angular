@@ -4,6 +4,7 @@ import {selectCrashState, selectErrorState, selectLoadingState} from '../store/t
 import {ServerService} from '../services/server.service';
 import {Store} from '@ngrx/store';
 import {getTasks, ResetErrorState} from '../store/tasks.actions';
+import {loginOut1} from '../store/auth.actions';
 
 @Component({
   selector: 'app-user-tasks',
@@ -28,5 +29,8 @@ export class UserTasksComponent implements OnInit {
   }
   ngOnInit(): void {
     this.store.dispatch(getTasks());
+  }
+  loginOut(): void{
+    this.store.dispatch(loginOut1());
   }
 }
