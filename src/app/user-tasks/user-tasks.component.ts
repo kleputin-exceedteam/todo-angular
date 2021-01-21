@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {Observable} from 'rxjs';
-import {selectCrashState, selectErrorState, selectLoadingState} from '../store/tasks.selectors';
+import {selectCrashState, selectErrorState, selectLoadingState} from '../store/tasks/tasks.selectors';
 import {ServerService} from '../services/server.service';
 import {Store} from '@ngrx/store';
-import {getTasks, ResetErrorState} from '../store/tasks.actions';
-import {loginOut1} from '../store/auth.actions';
+import {getTasks, ResetErrorState} from '../store/tasks/tasks.actions';
+import {loginOut1} from '../store/auth/auth.actions';
 
 @Component({
   selector: 'app-user-tasks',

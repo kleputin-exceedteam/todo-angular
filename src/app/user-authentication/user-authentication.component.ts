@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
-import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {selectLoginState} from '../store/tasks.selectors';
-import {loginIn, loginOut1, signUp} from '../store/auth.actions';
+import {loginIn, loginOut1, signUp} from '../store/auth/auth.actions';
 
 @Component({
   selector: 'app-user-authentication',
@@ -23,6 +21,11 @@ export class UserAuthenticationComponent implements OnInit {
   }
   SignUp(username, password): void {
     this.store.dispatch(signUp({username, password}));
+  }
+  hideShowPass(toggle, input): void{
+    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+    input.setAttribute('type', type);
+    toggle.classList.toggle('fa-eye-slash');
   }
 
 }

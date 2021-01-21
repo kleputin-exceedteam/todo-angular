@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import {tap, map, mergeMap, catchError, withLatestFrom, concatMap} from 'rxjs/operators';
-import { ServerService } from '../services/server.service';
+import { ServerService } from '../../services/server.service';
 import * as taskActions from './tasks.actions';
 import {Store} from '@ngrx/store';
 import {selectAllComp} from './tasks.selectors';

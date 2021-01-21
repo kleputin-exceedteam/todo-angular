@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import Task from '../models/task';
 import {Store} from '@ngrx/store';
-import {selectFilterList} from '../store/tasks.selectors';
+import {selectFilterList} from '../store/tasks/tasks.selectors';
 import {ServerService} from '../services/server.service';
-import {Error, TryChangeName, TryChangeStatus, TryDelete} from '../store/tasks.actions';
+import {Error, TryChangeName, TryChangeStatus, TryDelete} from '../store/tasks/tasks.actions';
 import {Observable} from 'rxjs';
 
 @Component({

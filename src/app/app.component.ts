@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {loginSuccess } from './store/auth.actions'
+import {loginSuccess } from './store/auth/auth.actions'
 import {Observable} from 'rxjs';
-import {selectLoginState} from './store/tasks.selectors';
-import {ActivatedRoute, Router} from '@angular/router';
+import {selectLoginState} from './store/tasks/tasks.selectors';
+import { Router} from '@angular/router';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -20,8 +20,8 @@ export class AppComponent implements OnInit{
     if (localStorage.getItem('token')) {
       this.store.dispatch(loginSuccess());
     }
-    this.login.subscribe(res => {
-      if (res) {
+    this.login.subscribe(isLoggedIn => {
+      if (isLoggedIn) {
         this.router.navigate(['/userTasks']);
       } else {
         this.router.navigate(['/']);

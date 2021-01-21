@@ -1,14 +1,19 @@
 .inputs > div {
-  display: inline-block;
+  display: flex;
   width: 100%;
 }
 .inputs > div > input{
-  display: block;
   width: 100%;
   border: none;
   border-bottom: 2px solid #ff9b9b;
   margin-bottom: 20px;
   padding: 5px;
+}
+#icon{
+  position: absolute;
+  padding: 8px;
+  right: 0;
+  cursor: pointer;
 }
 .inputs > div > input:focus{
   outline: none;

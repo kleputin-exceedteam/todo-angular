@@ -1,70 +1,12 @@
-import {Action, createReducer, on} from '@ngrx/store';
+import { createReducer, on} from '@ngrx/store';
 import * as TaskActions from './tasks.actions';
-import Task from '../models/task';
-import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
-import * as AuthActions from './auth.actions';
+import Task from '../../models/task';
+import {filterAdapter, initialState, tasksAdapter} from '../interfaces/appState';
 
-export interface AppState {
-  tasksState: TasksState;
-  filteredTasksState: FilteredState;
-  loading: boolean;
-  error: boolean;
-  crash: boolean;
-  login: boolean;
-}
 
-export interface TasksState extends EntityState<Task> {
-  count: number;
-  all_comp: boolean;
-  countComp: number;
-}
-
-export interface FilteredState extends EntityState<Task>{
-  filter: number;
-}
-
-export function selectTskId(task: Task): string {
-  return task._id;
-}
-
-export const filterAdapter: EntityAdapter<Task> = createEntityAdapter({
-  selectId: selectTskId
-});
-
-export const tasksAdapter: EntityAdapter<Task> = createEntityAdapter<Task>({
-  selectId: selectTskId
-});
-
-export const initialStateTasks: TasksState = tasksAdapter.getInitialState({
-  count: 0,
-  all_comp: false,
-  countComp: 0
-});
-
-export const initialStateFiltered: FilteredState = filterAdapter.getInitialState({
-  filter: 1
-});
-
-export const initialState = {
-  tasksState: initialStateTasks,
-  filteredTasksState: initialStateFiltered,
-  loading: false,
-  error: false,
-  crash: false,
-  login: false
-};
 
 export const tasksReducer = createReducer(
   initialState,
-  on(AuthActions.loginSuccess, (state) => {
-    return {
-      ...state,
-      login: true
-    };
-  }),
-  on(AuthActions.loginOut, (state) => {
-    return initialState;
-  }),
   on(TaskActions.TryMarkAll, TaskActions.TryChangeName, TaskActions.TryDeleteComp,
     TaskActions.TryChangeStatus, TaskActions.TryAdd, TaskActions.TryDelete, TaskActions.getTasks, (state) => {
     return {
@@ -211,11 +153,6 @@ export const tasksReducer = createReducer(
       filteredTasksState: filterAdapter.updateOne({id: props.id, changes: {name: props.newname}}, state.filteredTasksState)
     };
   }));
-
-// tslint:disable-next-line:typedef
-export function reducer(state: AppState | undefined, action: Action) {
-  return tasksReducer(state, action);
-}
 
 const {
   selectAll

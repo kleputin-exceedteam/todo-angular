@@ -8,15 +8,17 @@ import { FilterComponent } from './filter/filter.component';
 import {FormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import {StoreModule} from '@ngrx/store';
-import { reducer } from './store/tasks.reducers';
+import { reducer } from './store';
 import {EffectsModule} from '@ngrx/effects';
-import {TasksEffectors} from './store/tasks.effectors';
+import {TasksEffectors} from './store/tasks/tasks.effectors';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {DisabledDirective} from './directives/DisabledDirective';
 import { UserTasksComponent } from './user-tasks/user-tasks.component';
 import { UserAuthenticationComponent } from './user-authentication/user-authentication.component';
 import {AppRoutingModule} from './app-routing/app-routing.module';
-import {AuthEffectors} from './store/auth.effectors';
+import {AuthEffectors} from './store/auth/auth.effectors';
+import {tasksReducer} from './store/tasks/tasks.reducers';
+import {authReducer} from './store/auth/auth.reducers';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,7 @@ import {AuthEffectors} from './store/auth.effectors';
     UserAuthenticationComponent
   ],
   imports: [
-    StoreModule.forRoot({AppState: reducer}),
+    StoreModule.forRoot({AppState: authReducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
     }),    BrowserModule,

@@ -4,7 +4,8 @@
       <input placeholder="username" #username id="username">
     </div>
     <div>
-      <input placeholder="password" #password id="password">
+      <input type="password" placeholder="password" #password id="password">
+      <i id='icon' #icon class="fas fa-eye fa-eye-slash" (click)="hideShowPass(icon, password)"></i>
     </div>
   </div>
   <div class="buttons">
