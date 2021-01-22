@@ -1,36 +1,38 @@
 import {createSelector} from '@ngrx/store';
-import {AppState, FilteredState, TasksState} from '../interfaces/appState';
+import { FilteredState, TasksState} from '../interfaces/tasks.interfaces';
 import {selectFilteredTasks} from './tasks.reducers';
+import {InLoginState} from '../interfaces/AppState';
+import {AppState } from '../interfaces/AppState';
 
 const selectTasksState = (state: { AppState: AppState }): TasksState => {
-  return state.AppState.tasksState;
+  return state.AppState.InLogin.tasksState;
 };
 
 const selectFilterState = (state: { AppState: AppState }): FilteredState => {
-  return state.AppState.filteredTasksState;
+  return state.AppState.InLogin.filteredTasksState;
 };
 
-const selectAppState = (state: { AppState: AppState }): AppState => {
-  return state.AppState;
+const selectInLoginState = (state: { AppState: AppState }): InLoginState => {
+  return state.AppState.InLogin;
 };
 
 export const selectErrorState = createSelector(
-  selectAppState,
-  (state: AppState): boolean => {
+  selectInLoginState,
+  (state: InLoginState): boolean => {
     return state.error;
   }
 );
 
 export const selectCrashState = createSelector(
-  selectAppState,
-  (state: AppState): boolean => {
+  selectInLoginState,
+  (state: InLoginState): boolean => {
     return state.crash;
   }
 );
 
 export const selectLoadingState = createSelector(
-  selectAppState,
-  (state: AppState): boolean => {
+  selectInLoginState,
+  (state: InLoginState): boolean => {
     return state.loading;
   }
 );
@@ -58,12 +60,5 @@ export const selectCountComp = createSelector(
   selectTasksState,
   (state: TasksState): number => {
     return state.countComp;
-  }
-);
-
-export const selectLoginState = createSelector(
-  selectAppState,
-  (state: AppState): boolean => {
-    return state.login;
   }
 );

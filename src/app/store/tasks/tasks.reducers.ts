@@ -1,12 +1,13 @@
 import { createReducer, on} from '@ngrx/store';
 import * as TaskActions from './tasks.actions';
 import Task from '../../models/task';
-import {filterAdapter, initialState, tasksAdapter} from '../interfaces/appState';
-
-
+import {filterAdapter, initialInLoginState, tasksAdapter} from '../interfaces/tasks.interfaces';
+import {loginOut} from '../auth/auth.actions';
+import {getFilterBoolean} from './middleware.reducers';
 
 export const tasksReducer = createReducer(
-  initialState,
+  initialInLoginState,
+  on(loginOut, () => initialInLoginState),
   on(TaskActions.TryMarkAll, TaskActions.TryChangeName, TaskActions.TryDeleteComp,
     TaskActions.TryChangeStatus, TaskActions.TryAdd, TaskActions.TryDelete, TaskActions.getTasks, (state) => {
     return {
@@ -29,6 +30,7 @@ export const tasksReducer = createReducer(
     };
   }),
   on(TaskActions.retrievedTasks, (state, payload) => {
+    console.log('reducer works');
     return {
       ...state,
       loading: false,
@@ -159,13 +161,3 @@ const {
 } = filterAdapter.getSelectors();
 
 export const selectFilteredTasks = selectAll;
-
-function getFilterBoolean(filter: number, task: Task): boolean {
-  if (filter === 1) {
-    return true;
-  } else if (filter === 2 && !task.is_active) {
-    return true;
-  } else if (filter === 3 && task.is_active) {
-    return true;
-  }
-}

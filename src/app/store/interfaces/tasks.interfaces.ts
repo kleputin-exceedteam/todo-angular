@@ -1,21 +1,11 @@
 import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 import Task from '../../models/task';
 
-export interface AppState {
-  tasksState: TasksState;
-  filteredTasksState: FilteredState;
-  loading: boolean;
-  error: boolean;
-  crash: boolean;
-  login: boolean;
-}
-
 export interface TasksState extends EntityState<Task> {
   count: number;
   all_comp: boolean;
   countComp: number;
 }
-
 
 export interface FilteredState extends EntityState<Task>{
   filter: number;
@@ -33,12 +23,7 @@ export const tasksAdapter: EntityAdapter<Task> = createEntityAdapter<Task>({
   selectId: selectTskId
 });
 
-/*export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
-  selectedUserId: null,
-});*/
-
-export const initialState = {
+export const initialInLoginState = {
   tasksState: tasksAdapter.getInitialState({
     count: 0,
     all_comp: false,
@@ -49,11 +34,5 @@ export const initialState = {
   }),
   loading: false,
   error: false,
-  crash: false,
-  login: false
+  crash: false
 };
-
-
-export const initialStateTasks: TasksState = tasksAdapter.getInitialState(initialState.tasksState);
-
-export const initialStateFiltered: FilteredState = filterAdapter.getInitialState(initialState.filteredTasksState);

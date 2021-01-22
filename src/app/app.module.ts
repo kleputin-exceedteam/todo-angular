@@ -31,7 +31,7 @@ import {authReducer} from './store/auth/auth.reducers';
     UserAuthenticationComponent
   ],
   imports: [
-    StoreModule.forRoot({AppState: authReducer}),
+    StoreModule.forRoot({AppState: reducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
     }),    BrowserModule,

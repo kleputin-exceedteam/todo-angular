@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {loginSuccess } from './store/auth/auth.actions'
+import {loginSuccess } from './store/auth/auth.actions';
 import {Observable} from 'rxjs';
-import {selectLoginState} from './store/tasks/tasks.selectors';
+import {selectLoginState} from './store/auth/auth.selectors';
 import { Router} from '@angular/router';
 @Component({
   selector: 'app-root',
