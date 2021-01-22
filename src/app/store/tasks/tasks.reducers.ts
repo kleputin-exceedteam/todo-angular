@@ -30,7 +30,6 @@ export const tasksReducer = createReducer(
     };
   }),
   on(TaskActions.retrievedTasks, (state, payload) => {
-    console.log('reducer works');
     return {
       ...state,
       loading: false,

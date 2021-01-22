@@ -16,7 +16,11 @@ export class AuthEffectors {
     mergeMap((action) => this.service.LogIn(action.username, action.password).pipe(
       map(() => AuthActions.loginSuccess()),
       catchError((err) => {
-        console.log(err);
+        if (err.status === 404){
+          console.log('user not found'); // dispatch some actions
+        } else if (err.status === 406){
+          console.log('user password\'s is wrong'); // too dispatch
+        }
         return of(AuthActions.loginOut());
       })
     ))

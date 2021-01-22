@@ -17,7 +17,11 @@ export class UserAuthenticationComponent implements OnInit {
   }
 
   LogIn(username, password): void {
-    this.store.dispatch(loginIn({username, password}));
+    if (username.trim().length === 0 || password.trim().length === 0){
+      console.log('User name or password can\'t be empty');
+    } else {
+      this.store.dispatch(loginIn({username, password}));
+    }
   }
   SignUp(username, password): void {
     this.store.dispatch(signUp({username, password}));

@@ -6,7 +6,7 @@ import { InputComponent } from './input/input.component';
 import { ListComponent } from './list/list.component';
 import { FilterComponent } from './filter/filter.component';
 import {FormsModule} from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {StoreModule} from '@ngrx/store';
 import { reducer } from './store';
 import {EffectsModule} from '@ngrx/effects';
@@ -17,8 +17,9 @@ import { UserTasksComponent } from './user-tasks/user-tasks.component';
 import { UserAuthenticationComponent } from './user-authentication/user-authentication.component';
 import {AppRoutingModule} from './app-routing/app-routing.module';
 import {AuthEffectors} from './store/auth/auth.effectors';
-import {tasksReducer} from './store/tasks/tasks.reducers';
-import {authReducer} from './store/auth/auth.reducers';
+import {AuthInterceptor} from './auth.interceptor';
+import {MatDialogModule} from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -34,14 +35,16 @@ import {authReducer} from './store/auth/auth.reducers';
     StoreModule.forRoot({AppState: reducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
-    }),    BrowserModule,
+    }), BrowserModule,
     FormsModule,
     HttpClientModule,
     EffectsModule.forFeature([TasksEffectors]),
     EffectsModule.forRoot([AuthEffectors]),
-    AppRoutingModule
+    AppRoutingModule, MatDialogModule, BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
